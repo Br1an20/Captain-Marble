@@ -17,6 +17,8 @@ var Preloader = {
     game.load.setPreloadSprite(game.preloaderBar);
 
     //load the basic assets 
+    game.load.image('WannaPlayAgain', 'assets/img/WannaPlayAgain.png');
+    game.load.image('restart1', 'assets/img/restart1.png');
     game.load.image('arrowBlue', 'assets/img/arrowDownBlue.png');
     game.load.image('arrowPurple', 'assets/img/arrowDownPurple.png');
  	  game.load.image('player1', 'assets/img/player1.png');

@@ -54,7 +54,14 @@ var gameMain = {
         this.musicButton = game.add.sprite(1120,0,'musicButton');
         this.musicButton.frame = 2;
 
-        
+        var Label = game.add.text(300,50, '1. Drag Your Marble From the Rest\n  Area on the Left to the Arena', { fontSize: '20px', fill: '#fff' });
+        Label.anchor.set(0.5);
+        Label2 = game.add.text(900, 50, '2. The Archer Marble Can push \nan Enemy for a Certain Distance\n Select Your Target by Clicking', { fontSize: '20px', fill: '#fff' });
+        Label2.anchor.set(0.5);
+        Label3 = game.add.text(300, 650, '3.After Deploy Your Marble \n You May Select Your Marble to Shoot', { fontSize: '20px', fill: '#fff' });
+        Label3.anchor.set(0.5);
+        Label4 = game.add.text(900, 650, '4.Shoot in Any Direction \n (No need to select target', { fontSize: '20px', fill: '#fff' });
+        Label4.anchor.set(0.5);
 
         this.BGM = game.add.audio('BGM');
         this.BGM.play('', 0, 0.75, true);
@@ -93,11 +100,6 @@ var gameMain = {
     update:function(){
 
         if (!inSideOfArena) {
-            
-            var Label = game.add.text(600, 200, 'Drag Your Marble From the Rest\n  Area on the Left to the Arena', { fontSize: '20px', fill: '#000' });
-
-            Label.anchor.set(0.5);
-
             this.blackMarble.events.onDragStart.add(function(item) {
                 var choose = game.add.audio('choose');
                 choose.play('', 0, 0.75, false);
@@ -107,7 +109,7 @@ var gameMain = {
                 item.scale.setTo(0.04, 0.04);
                 var placing = game.add.audio('placing');
                 placing.play('', 0, 0.2, false);
-                Label.destroy();
+             
                 if (item.x > 330 && item.x < 870 && item.y > 80 && item.y < 620) {
                     inSideOfArena = true;
                 }
@@ -125,6 +127,7 @@ var gameMain = {
                 Win.anchor.set(0.5);
                 this.targetMarble.kill();
                 game.state.start("gameOver");
+                
             }
 
             this.blackMarble.input.disableDrag();
@@ -141,8 +144,7 @@ var gameMain = {
                     var Label3;
                     var Label4;
                     if (!aimedAndFired) {
-                        Label2 = game.add.text(600, 200, 'The Archer Marble Can push \nan Enemy for a Certain Distance\n Select Your Target by Clicking', { fontSize: '20px', fill: '#000' });
-                        Label2.anchor.set(0.5);
+
                         var angle = game.physics.arcade.angleBetween(this.blackMarble, game.input.mousePointer) * 180 / Math.PI;
                         this.blackArrow.angle = angle + 90;
                         this.blackArrow.x = this.blackMarble.x;
@@ -151,7 +153,7 @@ var gameMain = {
                             aimedAndFired = true;
                             var shooting = game.add.audio('shooting');
                             shooting.play('', 0, 0.75, false);
-                            Label2.destroy();
+                            
                             item.events.destroy();
 
                         })
@@ -167,15 +169,14 @@ var gameMain = {
                                 game.physics.arcade.velocityFromAngle(angle, 0, this.targetMarble.body.velocity);
                                 targetStopped = true;
                             } else {
-                                Label3 = game.add.text(600, 200, '            After Deploy Your Marble \n You May Select Your Marble to Shoot', { fontSize: '20px', fill: '#000' });
-                                Label3.anchor.set(0.5);
+                              
                                 if(!selectedShootMarble) {
                                     this.blackMarble.events.onInputDown.add(function(item) {
                                         
                                         selectedShootMarble = true;
                                         var choose = game.add.audio('choose');
                                         choose.play('', 0, 0.75, false);
-                                        Label3.destroy();
+                                       
                                         item.events.destroy();
                                     });
                                 } else {
@@ -188,8 +189,7 @@ var gameMain = {
                                     } else {
                                         var x_ = 0;
                                         var y_ = 0;
-                                        Label4 = game.add.text(600, 200, 'Shoot in Any Direction \n (No need to select target', { fontSize: '20px', fill: '#000' });
-                                        Label4.anchor.set(0.5);
+                                       
                                         var angle = game.physics.arcade.angleBetween(this.blackMarble, game.input.mousePointer) * 180 / Math.PI;
                                         if(!aimedAndShot) {
                                             this.blackArrow.angle = angle + 90;
@@ -198,7 +198,7 @@ var gameMain = {
                                             game.input.onDown.add(function(item) {
                                                 var shooting = game.add.audio('shooting');
                                                 shooting.play('', 0, 0.75, false);
-                                                Label4.destroy();
+                                                
                                                 x_ = game.input.mousePointer.x;
                                                 y_ = game.input.mousePointer.y; 
                                                 aimedAndShot = true;
