@@ -47,6 +47,20 @@ var gameMain = {
         this.targetMarble.enableBody = true;
         game.physics.arcade.enable(this.targetMarble);
 
+        //Bar1
+        this.bar1Mpty = game.add.image(185,400,'blueBarMpty');
+        this.bar1Mpty.scale.set(0.1,0.5);
+        this.bar1Filed  = game.add.image(185,400,'blueBarFilled');
+        this.bar1Filed.scale.set(0.1,0.5);
+        //Bar2
+        this.bar2Mpty = game.add.image(925,400,'prBarMpty');
+        this.bar2Mpty.scale.set(0.1,0.5);
+        this.bar2Filed  = game.add.image(925,400,'prBarFilled');
+        this.bar2Filed.scale.set(0.1,0.5);
+
+
+
+
         /*this.blackArrow; = game.add.image(this.blackMarble.x, this.blackMarble.y, 'blackArrow');
         this.blackArrow.scale.set(0.05,0.05);
         this.blackArrow.anchor.setTo(0.5,1.5);*/
@@ -69,6 +83,7 @@ var gameMain = {
         this.setFlag();
 
     },
+
     setFlag: function(){
         this.musicButton.inputEnabled = true;
         this.musicButton.events.onInputDown.add(this.toggleMusic,this);
@@ -98,6 +113,28 @@ var gameMain = {
 
 
     update:function(){
+        //Bar controleller
+        cursors = game.input.keyboard.createCursorKeys();
+        if (cursors.left.isDown){
+            this.bar1Filed.width = this.bar1Filed.width - 5;
+            this.bar2Filed.width = this.bar2Filed.width - 5;
+            if(this.bar1Filed.width<0){
+                this.bar1Filed.width = 0
+            }
+            if(this.bar2Filed.width<0){
+                this.bar2Filed.width = 0
+            }
+        }   else if (cursors.right.isDown){
+            this.bar1Filed.width = this.bar1Filed.width + 5;
+            this.bar2Filed.width = this.bar2Filed.width + 5;
+            if(this.bar1Filed.width > this.bar1Mpty.width){
+            this.bar1Filed.width = this.bar1Mpty.width;
+            }
+            if(this.bar2Filed.width > this.bar2Mpty.width){
+            this.bar2Filed.width = this.bar2Mpty.width;
+            }
+        }
+
 
         if (!inSideOfArena) {
             this.blackMarble.events.onDragStart.add(function(item) {
