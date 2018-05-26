@@ -1,4 +1,4 @@
-var gameOver={    
+var gameOver1={    
     
    preload:function()
     {
@@ -13,6 +13,9 @@ var gameOver={
 
         this.WannaPlayAgain = game.add.image(game.world.centerX, game.world.centerY,'WannaPlayAgain');
         this.WannaPlayAgain.anchor.set(0.5,0.5);
+
+        this.YouWin =  game.add.image(game.world.centerX, game.world.centerY - 100, "YouWin");
+        this.YouWin.anchor.set(0.5,0.5);
 
         this.BGM = game.add.audio('startAndEnd');
         this.BGM.play('', 0, 0.75, true);
