@@ -45,6 +45,7 @@ var Preloader = {
     game.load.audio('hit', 'assets/sounds/hit.mp3');
 
     game.load.image('blackMarble', 'assets/img/black-sphere.png');
+    game.load.image('fireMarble', 'assets/img/fire-sphere.png');
     game.load.image('blackArrow', 'assets/img/black-arrow.png');
 
     this.loadCompleted();

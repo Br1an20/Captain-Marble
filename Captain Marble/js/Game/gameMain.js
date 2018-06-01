@@ -1,36 +1,74 @@
 var select = true;
 var marbleIndex = -1;
 
-function marble (x, y, index) {
+function marble (x, y, type, firstSkill, secondSkill, index, owner) {
 	//var x = game.world.randomX;
 	//var y = game.world.randomY;
-
-	this.marble = game.add.sprite(x, y, 'blackMarble');
+	if (owner == 1) {
+		this.marble = game.add.sprite(x, y, 'blackMarble');
+	} else {
+		this.marble = game.add.sprite(x, y, 'fireMarble');
+	}
     this.marble.scale.set(0.04,0.04);
     this.marble.anchor.setTo(0.5,0.5);
     this.marble.inputEnabled = true;
     this.marble.enableBody = true;
     //this.marble.input.enableDrag(); //uncomment this to enable drag
-    game.physics.arcade.enable(this.marble);
     this.marble.name = index.toString();
+    this.marble.type = type;
+    this.marble.firstSkill = firstSkill;
+    this.marble.secondSkill = secondSkill;
+    this.marble.owner = owner;
+    game.physics.arcade.enable(this.marble);
 
     this.speed = 0;
     this.angle = 0;
     this.lastTarget = -1;
 
+    this.strengthFactor = 1;
+    this.knockBackFactor = 1;
+    this.frictionFactor = 1;
+    this.returnFactor = 1;
+
+    //console.log("created marble");
+    if (type == 1) { //Warrior
+    	if (secondSkill == 1) { //Smite
+    		this.strengthFactor += this.strengthFactor * 0.18;
+    	}
+    	else if (secondSkill == 2) { //Bravery
+    		this.knockBackFactor -= this.knockBackFactor * 0.12;
+    		this.strengthFactor += this.strengthFactor * 0.08;
+    	}
+    }
+    else if (type == 2) {
+    	if (secondSkill == 1) { //Swift
+    		this.frictionFactor -= this.frictionFactor * 0.12;
+    		this.strengthFactor += this.strengthFactor * 0.10;
+    	}
+    }
+    else if (type == 3) {
+    	if (secondSkill == 1) { //Steady
+    		this.knockBackFactor -= this.knockBackFactor * 0.2;
+    	}
+    	else if (secondSkill == 2) { //Firm
+    		this.returnFactor += this.returnFactor * 0.3;
+    		this.frictionFactor += this.frictionFactor * 0.12;
+    	}
+    }
+
     //uncomment this to enable drag
-    /*this.marble.events.onDragStart.add(function(item) {
+    this.marble.events.onDragStart.add(function(item) {
         item.scale.setTo(0.05, 0.05);
     });
 
     this.marble.events.onDragStop.add(function(item) {
         item.scale.setTo(0.04, 0.04);
-    });*/
+    });
 
     //select
     this.marble.events.onInputDown.add(function(item) {
     	if(select) {
-    		console.log("marble " + item.name + " selected");
+    		//console.log("marble " + item.name + " selected");
     		marbleIndex = item.name;
     		disableSelect();
     	}
@@ -49,6 +87,12 @@ function enableSelect() {
 	select = true;
 }
 
+function disableAllDrag() {
+	for (var i = 0; i < marbles.length; i++) {
+		marbles[i].marble.input.disableDrag();
+	}
+}
+
 function stationary() {
 	for (var i = 0; i < marbles.length; i++) {
 		if (marbles[i].speed > 0) {
@@ -59,9 +103,20 @@ function stationary() {
 }
 
 function shootMarble(strength, item) {
-	console.log("marble " + item.marble.name + " shot");
+	console.log("shot at strength: " + strength);
 	item.speed = strength;
-	item.angle = game.physics.arcade.angleBetween(item.marble, game.input.mousePointer) * 180 / Math.PI + 180;
+	if (item.marble.type == 2 && item.marble.secondSkill == 2) {
+		var nearest = 0;
+		for (var i = 0; i < marbles.length; i++) {
+			if (distance(marbles[i].marble, game.input.mousePointer) < distance(marbles[nearest].marble, game.input.mousePointer) && i != item.marble.name) {
+				nearest = i;
+			}
+		}
+		console.log("nearest: " + nearest)
+		item.angle = game.physics.arcade.angleBetween(marbles[nearest].marble, item.marble) * 180 / Math.PI + 180;
+	} else {
+		item.angle = game.physics.arcade.angleBetween(item.marble, game.input.mousePointer) * 180 / Math.PI + 180;
+	}
 	game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
 	deselectMarble();
 }
@@ -78,7 +133,7 @@ var gameMain = {
 
     create: function () {
 
-		this.gameBoardMain = game.add.image(0, 0, 'gameBoardMain');
+		this.gameBoardMain = game.add.image(0, 0, 'gameBoard');
         this.trashCanBlue = game.add.image(0,620,'blueTrashCan');
         this.trashCanPurple = game.add.image(1120,620,'purpleTrashCan');
         //player1 image
@@ -110,14 +165,13 @@ var gameMain = {
         marbles = [];
 
         /*for (var i = 0; i < 6; i++) {
-        	marbles.push(new marble(i));
+        	marbles.push(game.world.randomX, game.world.randomY, 0, 0, 0, i+3);
         }*/
-        marbles.push(new marble(600, 300, 0));
-        marbles.push(new marble(600, 400, 1));
-        marbles.push(new marble(800, 300, 2));
-        marbles.push(new marble(800, 400, 3));
-        marbles.push(new marble(400, 300, 4));
-        marbles.push(new marble(400, 400, 5));
+
+        marbles.push(new marble(450, 300, 2, 0, 1, 0, 1));
+        marbles.push(new marble(450, 450, 3, 0, 1, 1, 1));
+        marbles.push(new marble(750, 450, 2, 0, 2, 2, 2));
+        marbles.push(new marble(750, 300, 3, 0, 1, 3, 2));
         
     }, 
 
@@ -126,10 +180,11 @@ var gameMain = {
 
      	game.input.onUp.add(function(item) {
             if (marbleIndex > -1) {
-            	if (distance(marbles[marbleIndex].marble, game.input.mousePointer)*2 < 400) {
-            		shootMarble(distance(marbles[marbleIndex].marble, game.input.mousePointer)*2, marbles[marbleIndex]);
+            	
+            	if (distance(marbles[marbleIndex].marble, game.input.mousePointer)*2.8 < 350) {
+            		shootMarble((distance(marbles[marbleIndex].marble, game.input.mousePointer)*2.5)*marbles[marbleIndex].strengthFactor, marbles[marbleIndex]);
             	} else {
-            		shootMarble(400, marbles[marbleIndex]);
+            		shootMarble(350*marbles[marbleIndex].strengthFactor, marbles[marbleIndex]);
             	}
             }
         });
@@ -139,7 +194,9 @@ var gameMain = {
         marbles.forEach(function(item) {
             if (item.speed > 0) {
 
-            	item.speed -= 1.8;
+            	//console.log(item.frictionFactor);
+
+            	item.speed -= 2 * item.frictionFactor;
             	game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
 
             	for (var i = 0; i < marbles.length; i++) {
@@ -159,8 +216,9 @@ var gameMain = {
  				
             				item.angle = item.angle + Math.sin(Math.abs(diff)*Math.PI/180)*diff*2 + 180; //Determine angle difference by included angle
 
-            				marbles[i].speed = item.speed/2.5 + (item.speed * Math.cos(Math.abs(diff)*Math.PI/180))/3; //determine speed by decomposed force
-            				item.speed = item.speed/2.5 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5;
+            				//determine speed by decomposed force
+            				marbles[i].speed = (item.speed/2.5 + (item.speed * Math.cos(Math.abs(diff)*Math.PI/180))/3) * marbles[i].knockBackFactor;  //Target
+            				item.speed = (item.speed/2.5 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5) * item.knockBackFactor * marbles[i].returnFactor;	//Attacker
 
             				game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity); // move marbles 
             				game.physics.arcade.velocityFromAngle(marbles[i].angle, marbles[i].speed, marbles[i].marble.body.velocity);
@@ -182,6 +240,47 @@ var gameMain = {
     	}
 
     	 //==========Homemade Physics Engine Ends=============
+
+    	marbles.forEach(function(item) {
+    		if (distance(item.marble, game.input.mousePointer) < 28){
+    			console.log();
+			    //console.log("marble: " + item.marble.name);
+			    //console.log("owner: player " + item.marble.owner);
+			    if (item.marble.type == 1) {
+			    	console.log("type: Warrior");
+				    if (item.marble.secondSkill == 1) {
+				    	console.log("Passive: Smite - Much higher strength");
+				    }
+				    else if (item.marble.secondSkill == 2) {
+				    	console.log("Passive: Bravery - Receive less knock back and higher strength");
+				    }
+			    } 
+			    else if (item.marble.type == 2) {
+			    	console.log("type: Ranger");
+			    	if (item.marble.secondSkill == 1) {
+				    	console.log("Passive: Swift - Less friction and higher strength");
+				    }
+				    else if (item.marble.secondSkill == 2) {
+				    	console.log("Passive: Accurate - Fire to the center of the nearest marble to mousePointer");
+				    }
+			    }
+			    else if (item.marble.type == 3) {
+			    	console.log("type: Castle");
+			    	if (item.marble.secondSkill == 1) {
+				    	console.log("Passive: Steady - Receive much less knock back");
+				    }
+				    else if (item.marble.secondSkill == 2) {
+				    	console.log("Passive: firm - Return higher strength when hit");
+				    }
+			    }
+				
+				//console.log("Active: Not Implemented");
+
+				
+
+				console.log();
+			}
+		});
 
      	//Bar controleller
         cursors = game.input.keyboard.createCursorKeys();
