@@ -11,6 +11,19 @@ var Preloader = {
 
 
     //load the basic assets
+   game.load.image('warcry', 'assets/img/warcry skill name.png');
+   game.load.image('tower', 'assets/img/Tower skill name.png');
+   game.load.image('swift', 'assets/img/swift skill name.png');
+   game.load.image('steady', 'assets/img/steady skill name.png');
+   game.load.image('sneak', 'assets/img/Sneak skill name.png');
+   game.load.image('smite', 'assets/img/Smite skill name.png');
+   game.load.image('sling', 'assets/img/sling skill name.png');
+   game.load.image('rush', 'assets/img/Rush skill name.png');
+   game.load.image('poison', 'assets/img/Poison skill name.png');
+   game.load.image('firm', 'assets/img/Firm skill name.png');
+   game.load.image('bravery', 'assets/img/Bravery skill name.png');
+   game.load.image('accurate', 'assets/img/accurate skill name.png');
+
 
     game.load.image('prBarFilled', 'assets/img/prBarFilled.png');
     game.load.image('prBarMpty', 'assets/img/prBarMpty.png'); 
@@ -23,14 +36,16 @@ var Preloader = {
     game.load.image('WannaPlayAgain', 'assets/img/WannaPlayAgain.png');
     game.load.image('restart1', 'assets/img/restart1.png');
 
- 
- 	  game.load.image('setting', 'assets/img/settingUp.png');
+    game.load.image('cannon', 'assets/img/cannon.png');
+    game.load.image('bow', 'assets/img/bow.png'); 
 
- 	  game.load.image('music', 'assets/img/music.png');
+ 	game.load.image('setting', 'assets/img/settingUp.png');
+ 	
     game.load.image('gameBoardMain', 'assets/img/GameBoardMain.png');
     game.load.image('gameBoard', 'assets/img/GameBoard.png');
     game.load.image('blueTrashCan', 'assets/img/trashCanBlue.png');
     game.load.image('purpleTrashCan', 'assets/img/trashCanPurple.png');
+
 
     game.load.spritesheet('player1', 'assets/img/player1.png',132,60,2);
     game.load.spritesheet('player2', 'assets/img/player2.png',132,60,2);
