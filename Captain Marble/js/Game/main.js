@@ -16,5 +16,7 @@ window.onload = function () {
     game.state.add("gameOver1", gameOver1);
     game.state.add("gameOver2", gameOver2);
     game.state.add("gameStart", gameStart);
+    
+    game.state.add("pickUpState", pickUpState);
     game.state.start("Boot");
 }
