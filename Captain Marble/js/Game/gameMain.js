@@ -19,8 +19,10 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     this.marble.firstSkill = firstSkill;
     this.marble.secondSkill = secondSkill;
     this.marble.owner = owner;
+    
     game.physics.arcade.enable(this.marble);
 
+    this.status = 1; // 0 fall  1 rest  2 arena
     this.speed = 0;
     this.angle = 0;
     this.lastTarget = -1;
@@ -63,6 +65,10 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
 
     this.marble.events.onDragStop.add(function(item) {
         item.scale.setTo(0.04, 0.04);
+        //if (!insideOfArena(item)/* || !insideOfRestArea(item)*/) {
+        //    console.log("fall");
+        //}
+        
     });
 
     //select
@@ -93,6 +99,13 @@ function disableAllDrag() {
 	}
 }
 
+function killMarble(item) {
+
+    //console.log(item.marble.name + " is out");
+    item.marble.scale.setTo(0.01, 0.01);
+
+}
+
 function stationary() {
 	for (var i = 0; i < marbles.length; i++) {
 		if (marbles[i].speed > 0) {
@@ -121,8 +134,36 @@ function shootMarble(strength, item) {
 	deselectMarble();
 }
 
+function enterRestArea(item) {
+    var x_ = -20;
+    var x_dest = 100;
+
+    if (item.marble.owner == 2) {
+        x_ = 1220;
+        x_dest = 1100;
+    }
+
+    console.log("ahahhahahha")
+    item.status = 0;
+    var y_ = game.rnd.integerInRange(300, 500);
+    item.marble.body.x = x_;
+    item.marble.body.y = y_;
+    item.angle = game.physics.arcade.angleBetween(new Phaser.Point(x_, y_), new Phaser.Point(x_dest, game.rnd.integerInRange(300, 400))) * 180 / Math.PI + game.rnd.integerInRange(-15, 15)
+    item.speed = game.rnd.integerInRange(120, 180);
+    game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
+
+}
+
 function deselectMarble(item) {
 	marbleIndex = -1;
+}
+
+function insideOfArena(item) {
+    return distance(new Phaser.Point(600,350),item) < 300;
+}
+
+function insideOfRestArea(item) {
+    return (distance(new Phaser.Point(-120,350),item) < 280 || distance(new Phaser.Point(1320,350),item) < 280) && (item.body.x > -20) && (item.body.x < 1200);
 }
 
 var gameMain = {
@@ -170,14 +211,16 @@ var gameMain = {
 
         marbles.push(new marble(450, 300, 2, 0, 1, 0, 1));
         marbles.push(new marble(450, 450, 3, 0, 1, 1, 1));
-        marbles.push(new marble(750, 450, 2, 0, 2, 2, 2));
+        marbles.push(new marble(750, 450, 2, 0, 1, 2, 2));
         marbles.push(new marble(750, 300, 3, 0, 1, 3, 2));
-        
+        marbles.push(new marble(600, 350, 3, 0, 1, 4, 2));
+        marbles.push(new marble(30, 350, 3, 0, 1, 5, 1));
     }, 
 
 
      update: function () {
 
+        //trigger shoot
      	game.input.onUp.add(function(item) {
             if (marbleIndex > -1) {
             	
@@ -189,13 +232,54 @@ var gameMain = {
             }
         });
 
+
+        /*marbles.forEach(function(item) {
+                    //Detect if marble is out of arena
+            if (outOfArena(item)) {
+                
+                killMarble(item);
+                
+            }
+        });*/
+
+        /*marbles.forEach(function(item) {
+            if (distance(new Phaser.Point(-130, 350), item.marble) > 280) {
+
+                item.angle += 180;
+
+                game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
+
+
+            }
+
+        });*/
+
+        marbles.forEach(function(item) {
+            if (insideOfArena(item.marble)) {
+                item.status = 2;
+            } else 
+            if (insideOfRestArea(item.marble)) {
+                item.status = 1;
+            } else if (item.status != 0) {
+                enterRestArea(item);
+            }
+            /*console.log("insideOfArena: " + insideOfArena(item.marble) + " insideOfRestArea: " + insideOfRestArea(item.marble));
+            if (!insideOfArena(item.marble) && !insideOfRestArea(item.marble)) {
+
+                console.log("fall")
+
+            }*/
+
+        })
+
+
         //==========Homemade Physics Engine Starts=============
 
         marbles.forEach(function(item) {
+
+            //Setting basic friction
             if (item.speed > 0) {
-
             	//console.log(item.frictionFactor);
-
             	item.speed -= 2 * item.frictionFactor;
             	game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
 
@@ -241,12 +325,16 @@ var gameMain = {
 
     	 //==========Homemade Physics Engine Ends=============
 
+
+
+        //Print detail to console
     	marbles.forEach(function(item) {
     		if (distance(item.marble, game.input.mousePointer) < 28){
     			console.log();
 			    //console.log("marble: " + item.marble.name);
 			    //console.log("owner: player " + item.marble.owner);
-			    if (item.marble.type == 1) {
+                console.log("status: " + item.status)
+			    /*if (item.marble.type == 1) {
 			    	console.log("type: Warrior");
 				    if (item.marble.secondSkill == 1) {
 				    	console.log("Passive: Smite - Much higher strength");
@@ -272,7 +360,7 @@ var gameMain = {
 				    else if (item.marble.secondSkill == 2) {
 				    	console.log("Passive: firm - Return higher strength when hit");
 				    }
-			    }
+			    }*/
 				
 				//console.log("Active: Not Implemented");
 
