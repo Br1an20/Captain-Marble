@@ -5,7 +5,6 @@ var Preloader = {
 
 	preload: function(){
 
-    score = 100;
 	//place the game title
 
 
@@ -14,7 +13,7 @@ var Preloader = {
 
     //load the basic assets
    game.load.image('warcry', 'assets/img/warcry skill name.png');
-   game.load.image('tower', 'assets/img/Tower skill name.png');
+   game.load.image('towering', 'assets/img/Tower skill name.png');
    game.load.image('swift', 'assets/img/swift skill name.png');
    game.load.image('steady', 'assets/img/steady skill name.png');
    game.load.image('sneak', 'assets/img/Sneak skill name.png');
@@ -25,6 +24,9 @@ var Preloader = {
    game.load.image('firm', 'assets/img/Firm skill name.png');
    game.load.image('bravery', 'assets/img/Bravery skill name.png');
    game.load.image('accurate', 'assets/img/accurate skill name.png');
+
+   game.load.image('sneak', 'assets/img/sneak.png');
+
 
 
     game.load.image('prBarFilled', 'assets/img/prBarFilled.png');
@@ -64,6 +66,8 @@ var Preloader = {
     game.load.image('blackMarble', 'assets/img/black-sphere.png');
     game.load.image('fireMarble', 'assets/img/fire-sphere.png');
     game.load.image('blackArrow', 'assets/img/black-arrow.png');
+    game.load.image('purpleMarble', 'assets/img/purpleMarble.png');
+    game.load.image('blueMarble', 'assets/img/blueMarble.png');
 
     this.loadCompleted();
 	},

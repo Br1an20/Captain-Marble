@@ -2,22 +2,24 @@ var game;
 var score = 0;
 var scoreText; 
 var demo;
+var select = true;
 var soundOn = true;
 var musicOn = true; 
 
 function marble (x, y, type, firstSkill, secondSkill, index, owner) {
-    //var x = game.world.randomX;
-    //var y = game.world.randomY;
+    
     if (owner == 1) {
-        this.marble = game.add.sprite(x, y, 'blackMarble');
+        this.marble = game.add.sprite(x, y, 'purpleMarble');
     } else {
-        this.marble = game.add.sprite(x, y, 'fireMarble');
+        this.marble = game.add.sprite(x, y, 'blueMarble');
     }
-    this.marble.scale.set(0.04,0.04);
+    this.marble.x = x;
+    this.marble.y = y;
+    this.marble.scale.set(1,1);
     this.marble.anchor.setTo(0.5,0.5);
     this.marble.inputEnabled = true;
     this.marble.enableBody = true;
-    //this.marble.input.enableDrag(); //uncomment this to enable drag
+    this.marble.input.disableDrag(); //uncomment this to enable drag
     this.marble.name = index.toString();
     this.marble.type = type;
     this.marble.firstSkill = firstSkill;
@@ -64,14 +66,14 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
 
     //uncomment this to enable drag
     this.marble.events.onDragStart.add(function(item) {
-        item.scale.setTo(0.05, 0.05);
+        item.scale.setTo(1.2, 1.2);
     });
 
     this.marble.events.onDragStop.add(function(item) {
-        item.scale.setTo(0.04, 0.04);
-        /*if (insideOfArena) {
-            item.marble.input.DisableDrag();
-        }*/
+        item.scale.setTo(1, 1);
+        if (insideOfArena(item)) {
+            item.input.disableDrag();
+        }
         
     });
 
@@ -85,6 +87,60 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     });
 }
 
+function disableSelect() {
+    select = false;
+}
+
+function enableSelect() {
+    select = true;
+}
+
+function enterRestArea(item) {
+    var x_ = -20;
+    var x_dest = 200;
+
+    if (item.marble.owner == 2) {
+        x_ = 1220;
+        x_dest = 1000;
+    }
+
+    console.log("ahahhahahha")
+    item.status = 0;
+    var y_ = game.rnd.integerInRange(150, 550);
+    item.marble.body.x = x_;
+    item.marble.body.y = y_;
+    item.angle = game.physics.arcade.angleBetween(new Phaser.Point(x_, y_), new Phaser.Point(x_dest, game.rnd.integerInRange(300, 400))) * 180 / Math.PI + game.rnd.integerInRange(-15, 15)
+    item.speed = game.rnd.integerInRange(130, 170);
+    game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
+
+}
+
+function updateLocation () {
+    marbles.forEach(function(item) {
+        if (insideOfArena(item.marble)) {
+            item.status = 2;
+        } else 
+        if (insideOfRestArea(item.marble)) {
+            item.status = 1;
+            //item.marble.input.enableDrag();
+        } else if (item.status != 0 && item.marble.scale.x == 1) { 
+            //animation
+            item.lastTarget = -1;
+            enterRestArea(item);
+        }
+    })
+}
+
+function stationary() {
+    for (var i = 0; i < marbles.length; i++) {
+        if (marbles[i].speed > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 function distance (a, b) {
     return Phaser.Math.distance(a.x, a.y, b.x, b.y)
 }
@@ -94,7 +150,7 @@ function insideOfArena(item) {
 }
 
 function insideOfRestArea(item) {
-    return (distance(new Phaser.Point(-120,350),item) < 280 || distance(new Phaser.Point(1320,350),item) < 280) && (item.body.x > -20) && (item.body.x < 1200);
+    return ((distance(new Phaser.Point(-120,350),item) < 280 || distance(new Phaser.Point(1320,350),item) < 280)) && (item.body.x > -2) && (item.body.x < 1192);
 }
 
 window.onload = function () {
@@ -111,7 +167,8 @@ window.onload = function () {
     game.state.add("gameOver1", gameOver1);
     game.state.add("gameOver2", gameOver2);
     game.state.add("gameStart", gameStart);
-    
+
+    game.state.add("setUpState", setUpState);
     game.state.add("pickUpState", pickUpState);
     game.state.start("Boot");
 }
