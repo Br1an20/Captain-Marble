@@ -4,6 +4,8 @@ var timer;
 var Preloader = {
 
 	preload: function(){
+
+    score = 100;
 	//place the game title
 
 
