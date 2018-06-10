@@ -15,22 +15,22 @@ function buttonPressed(item) {
     var owner = 1;
 
     if (selected == "smite" || item.key == "smite" || selected == "swift" || item.key == "swift" || selected == "steady" || item.key == "steady") {
-        passive = 0;
-    }
-
-    if (selected == "rush" || item.key == "rush" || selected == "sneak" || item.key == "sneak" || selected == "sling" || item.key == "sling") {
-        active = 0;
-    }
-
-    if (selected == "bravery" || item.key == "bravery" || selected == "accurate" || item.key == "accurate" || selected == "firm" || item.key == "firm") {
         passive = 1;
     }
 
-    if (selected == "warcry" || item.key == "warcry" || selected == "poison" || item.key == "poison" || selected == "towering" || item.key == "towering") {
+    if (selected == "rush" || item.key == "rush" || selected == "sneak" || item.key == "sneak" || selected == "sling" || item.key == "sling") {
         active = 1;
     }
 
-    if (index > 4) {
+    if (selected == "bravery" || item.key == "bravery" || selected == "accurate" || item.key == "accurate" || selected == "firm" || item.key == "firm") {
+        passive = 2;
+    }
+
+    if (selected == "warcry" || item.key == "warcry" || selected == "poison" || item.key == "poison" || selected == "towering" || item.key == "towering") {
+        active = 2;
+    }
+
+    if (index > 1) {
         owner = 2;
     }
 
@@ -79,7 +79,7 @@ function buttonPressed(item) {
         else if (item.key == "sneak" || item.key == "poison") {
             if (selected == "swift" || selected == "accurate") {
                 console.log("spawned Warrior Marble with " + item.key + " and " + selected);
-                marbles.push(new marble(-20, -20, 1, active, passive, index, owner));
+                marbles.push(new marble(-20, -20, 2, active, passive, index, owner));
                 index += 1;
                 console.log("deselected " + selected);
                 selected = "none";
@@ -94,7 +94,7 @@ function buttonPressed(item) {
         else if (item.key == "swift" || item.key == "accurate") {
             if (selected == "sneak" || selected == "poison") {
                 console.log("spawned Warrior Marble with " + item.key + " and " + selected);
-                marbles.push(new marble(-20, -20, 1, active, passive, index, owner));
+                marbles.push(new marble(-20, -20, 2, active, passive, index, owner));
                 index += 1;
                 console.log("deselected " + selected);
                 selected = "none";
@@ -109,7 +109,7 @@ function buttonPressed(item) {
         else if (item.key == "sling" || item.key == "towering") {
             if (selected == "steady" || selected == "firm") {
                 console.log("spawned Warrior Marble with " + item.key + " and " + selected);
-                marbles.push(new marble(-20, -20, 1, active, passive, index, owner));
+                marbles.push(new marble(-20, -20, 3, active, passive, index, owner));
                 index += 1;
                 console.log("deselected " + selected);
                 selected = "none";
@@ -124,7 +124,7 @@ function buttonPressed(item) {
         else if (item.key == "steady" || item.key == "firm") {
             if (selected == "sling" || selected == "towering") {
                 console.log("spawned Warrior Marble with " + item.key + " and " + selected);
-                marbles.push(new marble(-20, -20, 1, active, passive, index, owner));
+                marbles.push(new marble(-20, -20, 3, active, passive, index, owner));
                 index += 1;
                 console.log("deselected " + selected);
                 selected = "none";
@@ -229,7 +229,7 @@ var pickUpState = {
 
          //==========Homemade Physics Engine Ends=============
 
-        if (stationary() && index > 9) {
+        if (stationary() && index > 3) {
             for (var i = 0; i < marbles.length; i++) {
                 marbles[i].marble.x = marbles[i].marble.body.x;
                 marbles[i].marble.y = marbles[i].marble.body.y;

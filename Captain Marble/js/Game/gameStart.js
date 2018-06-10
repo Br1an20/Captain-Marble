@@ -46,6 +46,4 @@ var gameStart = {
      update: function () {
     }
 
-    
-
 }

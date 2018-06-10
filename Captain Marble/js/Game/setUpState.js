@@ -9,6 +9,49 @@ function allMarblesDeployed() {
     return true;
 }
 
+function pointDistanceFromPointByAngle(x, y, distance, angle) {
+    var x_ = x + Math.sin(angle) * distance;
+    var y_ = y + Math.cos(angle) * distance;
+
+    console.log("inside function: " + x_ + ", " + y_)
+
+    return Phaser.Point(x_, y_);
+}
+
+function shootMarble(strength, angle, item) {
+    item.speed = strength;
+    item.angle = angle;
+    game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
+    deselectMarble();
+}
+
+function noDeployingMarble() {
+    for (var i = 0; i < marbles.length; i++) {
+        if (marbles[i].marble.status == 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function noDeployInProgress() {
+    for (var i = 0; i < marbles.length; i++) {
+        if (marbles[i].marble.status == 2) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function allEndTurnTriggered() {
+    //console.log("allEndTurnTriggered function")
+    for (var i = 0; i < marbles.length; i++) {
+        if (marbles[i].marble.endTurnTriggered == false && marbles[i].marble.firstSkill == 1 && marbles[i].marble.type == 3) {
+            return false;
+        }
+    }
+    return true;
+}
 
 var setUpState = {
 
@@ -50,6 +93,68 @@ var setUpState = {
         for (var i = 0; i < marbles.length; i++) {
             marbles[i] = new marble(marbles[i].marble.x, marbles[i].marble.y, marbles[i].marble.type, marbles[i].marble.firstSkill, marbles[i].marble.secondSkill, i, marbles[i].marble.owner);
             marbles[i].marble.input.enableDrag();
+
+            marbles[i].marble.events.onDragStop.add(function(item) {
+            if (insideOfArena(item)) {
+
+                //console.log(item.type + " " + item.firstSkill + " " + item.secondSkill)
+                item.status = 1;
+
+                if (item.type == 1) {
+                    if (item.firstSkill == 1) { // Rush
+                        console.log("Warrior - Rush");
+                        for (var i = 0; i < marbles.length; i++) {
+                            if (i != item.name && marbles[i].location) {
+
+                                if (distance(marbles[i].marble, item) <= 150) {
+
+                                    var angle = game.physics.arcade.angleBetween(item, marbles[i].marble) * 180 / Math.PI;
+
+                                    shootMarble(140, angle, marbles[i]);
+
+                                }
+
+                            }
+                        }
+                        item.status = 2;
+                    }
+                    else if (item.firstSkill == 2) {
+                        console.log("Warrior - Warcry");
+                        item.status = 2;
+                    }
+                }
+                else if (item.type == 2) {
+                    if (item.firstSkill == 1) {
+                        console.log("Ranger - Sneak");
+                        var angle = game.physics.arcade.angleBetween(item, game.input.mousePointer);
+                        marbles.push(new marble(item.x + Math.cos(angle) * 30, item.y + Math.sin(angle) * 30, 0, 0, 0, marbles.length, 0));
+                        game.input.onUp.add(function(item) {
+                            for (var i = 0; i < marbles.length; i++) {
+                                if (marbles[i].marble.status == 1 && marbles[i].marble.type == 2 && marbles[i].marble.firstSkill == 1) {
+                                    marbles[i].marble.status = 2;
+                                    shootMarble(600, game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer) * 180 / Math.PI, marbles[marbles.length - 1]);
+                                }
+                            }
+                        });
+                    }
+                    else if (item.firstSkill == 2) {
+                        console.log("Ranger - Poison");
+                        item.status = 2;
+                    }
+                }
+                else if (item.type == 3) {
+                    if (item.firstSkill == 1) {
+                        console.log("Castle - Sling");
+                        item.status = 2;
+                    }
+                    else if (item.firstSkill == 2) {
+                        console.log("Castle - Towering");
+                        item.status = 2;
+                    }
+                }
+
+            }
+    });
         }
     }, 
 
@@ -67,12 +172,19 @@ var setUpState = {
             //Setting basic friction
             if (item.speed > 0) {
                 //console.log(item.frictionFactor);
-                item.speed -= 1.80 * item.frictionFactor;
-                game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
+                if (item.marble.owner != 0) {
+                    item.speed -= 1.80 * item.frictionFactor;
+                    game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
+                }
 
                 for (var i = 0; i < marbles.length; i++) {
                     if (distance(item.marble, marbles[i].marble) < 28) {
                         if (item.marble.name != marbles[i].lastTarget && i != item.marble.name && marbles[i].marble.name != item.lastTarget) {
+
+                            if (item.marble.owner == 0) { //arrow sprite
+                                item.marble.kill();
+                                marbles.pop();
+                            }
 
                             item.lastTarget = marbles[i].marble.name;//record the last hit marble, to prevent double collision;
 
@@ -88,9 +200,12 @@ var setUpState = {
                             item.angle = item.angle + Math.sin(Math.abs(diff)*Math.PI/180)*diff*2 + 180; //Determine angle difference by included angle
 
                             //determine speed by decomposed force
-                            marbles[i].speed = (item.speed/2 + (item.speed * Math.cos(Math.abs(diff)*Math.PI/180))/3) * marbles[i].knockBackFactor;  //Target
-                            item.speed = (item.speed/2.5 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5) * item.knockBackFactor * marbles[i].returnFactor; //Attacker
-
+                            if (item.marble.owner != 0) {
+                                marbles[i].speed = (item.speed/2 + (item.speed * Math.cos(Math.abs(diff)*Math.PI/180))/3) * marbles[i].knockBackFactor;  //Target
+                                item.speed = (item.speed/2.5 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5) * item.knockBackFactor * marbles[i].returnFactor; //Attacker
+                            } else {
+                                marbles[i].speed = 180;
+                            }
                             game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity); // move marbles 
                             game.physics.arcade.velocityFromAngle(marbles[i].angle, marbles[i].speed, marbles[i].marble.body.velocity);
                         }
@@ -107,16 +222,67 @@ var setUpState = {
                 marbles[i].lastTarget = -1;
                 marbles[i].marble.body.velocity.x = 0;
                 marbles[i].marble.body.velocity.y = 0;
-            }
-            for (var i = 0; i < marbles.length; i++) {
                 if (!insideOfArena(marbles[i].marble) && !(insideOfRestArea(marbles[i].marble)) && marbles[i].marble.scale.x == 1) {
                     enterRestArea(marbles[i]);
                 }
+                if (marbles[i].marble.status == 2) {
+                    marbles[i].marble.status = 3;
+
+                    for (var j = 0; j < marbles.length; j++) {
+                        if (marbles[j].marble.type == 3 && marbles[j].marble.firstSkill == 1 && marbles[j].marble.status == 3) {
+                            console.log("Sling triggered");
+                            var nearest = 0;
+                            for (var k = 0; k < marbles.length; k++) {
+                                if (marbles[k].marble.status == 3) {
+                                    nearest = k;
+                                    break;
+                                }
+                            }
+                            
+                            for (var k = 0; k < marbles.length; k++) {
+                                if (marbles[k].marble.name != j && marbles[k].marble.status) {
+                                    if (distance(marbles[j].marble, marbles[k].marble) < distance(marbles[j].marble, marbles[nearest].marble)) {
+                                        nearest = k;
+                                    }
+                                }
+                            }
+                            
+                            if (marbles[j].marble.name != nearest) {
+                                var angle = game.physics.arcade.angleBetween(marbles[j].marble, marbles[nearest].marble);
+                                marbles.push(new marble(marbles[j].marble.x + Math.cos(angle) * 30, marbles[j].marble.y + Math.sin(angle) * 30, 0, 0, 0, marbles.length, 0));
+                            }
+                        }
+                    }
+
+                    console.log("turn end");
+                }
             }
+            /*if (!allEndTurnTriggered() && noDeployingMarble() && noDeployInProgress()) {
+                for (var i = 0; i < marbles.length; i++) {
+                    if (marbles[i].marble.type == 3 && marbles[i].marble.firstSkill == 1 && marbles[i].marble.status == 3 && !marbles[i].endTurnTriggered) {
+                        console.log("Sling triggered");
+                        marbles[i].endTurnTriggered = true;
+                        break;
+                    }
+                }
+            }
+            if (allEndTurnTriggered() && noDeployInProgress() && noDeployingMarble()) {
+                console.log("turn end");
+                for (var i = 0; i < marbles.length; i++) {
+                    marbles[i].endTurnTriggered = false;
+                }
+            }*/
         }
 
 
          //==========Homemade Physics Engine Ends=============
+
+        for (var i = 0; i < marbles.length; i++) {
+            if (marbles[i].marble.firstSkill == 1 && marbles[i].marble.type == 2 && marbles[i].marble.status == 1) {
+                marbles[marbles.length - 1].marble.body.x = marbles[i].marble.body.x + Math.cos(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer)) * 30
+                marbles[marbles.length - 1].marble.body.y = marbles[i].marble.body.y + Math.sin(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer)) * 30
+            }
+        }
 
         //Print detail to console
         /*marbles.forEach(function(item) {
@@ -124,7 +290,7 @@ var setUpState = {
                 console.log();
                 console.log("marble: " + item.marble.name);
                 console.log("owner: player " + item.marble.owner);
-                console.log("status: " + item.status)
+                console.log("location: " + item.location)
                 if (item.marble.type == 1) {
                     console.log("type: Warrior");
                     if (item.marble.secondSkill == 1) {
@@ -161,10 +327,10 @@ var setUpState = {
             }
         });*/
 
-        
-        if (allMarblesDeployed()) {
+
+        /*if (allMarblesDeployed()) {
             game.state.start("gameMain");
-        }
+        }*/
 
         //Bar controleller
         cursors = game.input.keyboard.createCursorKeys();
