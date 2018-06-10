@@ -4,7 +4,7 @@ var index = 0;
 buttons = [];
 
 function newButton (x, y, type) {
-    this.button = game.add.button(x, y, type, buttonPressed,this,0);
+    this.button = game.add.button(x, y, type, buttonPressed,this,0,1);
     this.button.anchor.setTo(0.5, 0.5);
 }
 
@@ -30,7 +30,7 @@ function buttonPressed(item) {
         active = 2;
     }
 
-    if (index > 1) {
+    if (index > 4) {
         owner = 2;
     }
 
@@ -162,7 +162,9 @@ var pickUpState = {
         buttons.push(new newButton(962, 140, "steady"));
         buttons.push(new newButton(962, 190, "firm"));
 
-
+        this.pickUpStateAnimation = game.add.sprite(0,0,'pickUpStateAnimation');
+        this.pickUpStateAnimation.animations.add('play',[0,1,2,3,4,5,6],7);
+        this.pickUpStateAnimation.animations.play('play',true);
 
         this.BGM = game.add.audio('startAndEnd');
         this.BGM.play('', 0, 0.75, true);
@@ -229,7 +231,7 @@ var pickUpState = {
 
          //==========Homemade Physics Engine Ends=============
 
-        if (stationary() && index > 3) {
+        if (stationary() && index > 9) {
             for (var i = 0; i < marbles.length; i++) {
                 marbles[i].marble.x = marbles[i].marble.body.x;
                 marbles[i].marble.y = marbles[i].marble.body.y;

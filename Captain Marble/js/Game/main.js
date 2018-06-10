@@ -9,9 +9,9 @@ var musicOn = true;
 function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     
     if (owner == 1) {
-        this.marble = game.add.sprite(x, y, 'purpleMarble');
-    } else {
         this.marble = game.add.sprite(x, y, 'blueMarble');
+    } else {
+        this.marble = game.add.sprite(x, y, 'purpleMarble');
     }
     this.marble.x = x;
     this.marble.y = y;
@@ -25,16 +25,13 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     this.marble.firstSkill = firstSkill;
     this.marble.secondSkill = secondSkill;
     this.marble.owner = owner;
-    this.marble.status = 0; // 0 undeplyed   1 deploying   2 deployInProgress    3 deployed    4 dead
-    this.marble.endTurnTriggered = false;
     
     game.physics.arcade.enable(this.marble);
 
-    this.location = 1; // 0 fall  1 rest  2 arena
+    this.status = 1; // 0 fall  1 rest  2 arena
     this.speed = 0;
     this.angle = 0;
     this.lastTarget = -1;
-    
 
     this.strengthFactor = 1;
     this.knockBackFactor = 1;
@@ -77,6 +74,7 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
         if (insideOfArena(item)) {
             item.input.disableDrag();
         }
+        
     });
 
     //select
@@ -106,7 +104,8 @@ function enterRestArea(item) {
         x_dest = 1000;
     }
 
-    item.location = 0;
+    console.log("ahahhahahha")
+    item.status = 0;
     var y_ = game.rnd.integerInRange(150, 550);
     item.marble.body.x = x_;
     item.marble.body.y = y_;
@@ -119,20 +118,15 @@ function enterRestArea(item) {
 function updateLocation () {
     marbles.forEach(function(item) {
         if (insideOfArena(item.marble)) {
-            item.location = 2;
+            item.status = 2;
         } else 
         if (insideOfRestArea(item.marble)) {
-            item.location = 1;
+            item.status = 1;
             //item.marble.input.enableDrag();
-        } else if (item.location != 0 && item.marble.scale.x == 1) { 
+        } else if (item.status != 0 && item.marble.scale.x == 1) { 
             //animation
-            if (item.marble.owner != 0) {
-                item.lastTarget = -1;
-                enterRestArea(item);
-            } else {
-                item.marble.kill();
-                marbles.pop();
-            }
+            item.lastTarget = -1;
+            enterRestArea(item);
         }
     })
 }
@@ -173,7 +167,8 @@ window.onload = function () {
     game.state.add("gameOver1", gameOver1);
     game.state.add("gameOver2", gameOver2);
     game.state.add("gameStart", gameStart);
-
+    game.state.add("toBlack", toBlack);
+    game.state.add("pickUpStateAnimation", pickUpStateAnimation);
     game.state.add("setUpState", setUpState);
     game.state.add("pickUpState", pickUpState);
     game.state.start("Boot");

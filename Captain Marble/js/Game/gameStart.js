@@ -31,7 +31,7 @@ var gameStart = {
     }, 
     startTest: function(){
         this.BGM.stop();
-        game.state.start("pickUpState")
+        game.state.start("pickUpState");
     },
     startDemo: function(){
         this.BGM.stop();

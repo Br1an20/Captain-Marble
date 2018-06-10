@@ -3,29 +3,15 @@ var timer;
 
 var Preloader = {
 
-	preload: function(){
+  preload: function(){
 
-	//place the game title
+  //place the game title
 
 
     //place the preloaderBar
 
 
     //load the basic assets
-   game.load.image('warcry', 'assets/img/warcry skill name.png');
-   game.load.image('towering', 'assets/img/Tower skill name.png');
-   game.load.image('swift', 'assets/img/swift skill name.png');
-   game.load.image('steady', 'assets/img/steady skill name.png');
-   game.load.image('sneak', 'assets/img/Sneak skill name.png');
-   game.load.image('smite', 'assets/img/Smite skill name.png');
-   game.load.image('sling', 'assets/img/sling skill name.png');
-   game.load.image('rush', 'assets/img/Rush skill name.png');
-   game.load.image('poison', 'assets/img/Poison skill name.png');
-   game.load.image('firm', 'assets/img/Firm skill name.png');
-   game.load.image('bravery', 'assets/img/Bravery skill name.png');
-   game.load.image('accurate', 'assets/img/accurate skill name.png');
-
-   game.load.image('sneak', 'assets/img/sneak.png');
 
 
 
@@ -43,19 +29,37 @@ var Preloader = {
     game.load.image('cannon', 'assets/img/cannon.png');
     game.load.image('bow', 'assets/img/bow.png'); 
 
- 	game.load.image('setting', 'assets/img/settingUp.png');
- 	
+    game.load.image('setting', 'assets/img/settingUp.png');
+  
     game.load.image('gameBoardMain', 'assets/img/GameBoardMain.png');
     game.load.image('gameBoard', 'assets/img/GameBoard.png');
     game.load.image('blueTrashCan', 'assets/img/trashCanBlue.png');
     game.load.image('purpleTrashCan', 'assets/img/trashCanPurple.png');
 
+    game.load.spritesheet('toBlack', 'assets/img/toBlack.png',1200,700,14);
+    game.load.spritesheet('fromBlack', 'assets/img/fromBlack.png',1200,700,18);
 
     game.load.spritesheet('player1', 'assets/img/player1.png',132,60,2);
     game.load.spritesheet('player2', 'assets/img/player2.png',132,60,2);
     game.load.spritesheet('sample4', 'assets/img/sample4.png',55,60);
 
+    game.load.spritesheet('warcry', 'assets/img/Warcry skill name.png',71,31,2);
+    game.load.spritesheet('towering', 'assets/img/Tower skill name.png',71,31,2);
+    game.load.spritesheet('swift', 'assets/img/Swift skill name.png',71,31,2);
+    game.load.spritesheet('steady', 'assets/img/Steady skill name.png',71,31,2);
+    game.load.spritesheet('sneak', 'assets/img/Sneak skill name.png',71,31,2);
+    game.load.spritesheet('smite', 'assets/img/Smite skill name.png',71,31,2);
+    game.load.spritesheet('sling', 'assets/img/Sling skill name.png',71,31,2);
+    game.load.spritesheet('rush', 'assets/img/Rush skill name.png',71,31,2);
+    game.load.spritesheet('poison', 'assets/img/Poison skill name.png',71,31,2);
+    game.load.spritesheet('firm', 'assets/img/Firm skill name.png',71,31,2);
+    game.load.spritesheet('bravery', 'assets/img/Bravery skill name.png',71,31,2);
+    game.load.spritesheet('accurate', 'assets/img/Accurate skill name.png',71,31,2);
+    game.load.spritesheet('sneak', 'assets/img/Sneak.png',71,31,2);
 
+    game.load.spritesheet('rushDetail', 'assets/img/Rush detail.png',121,48,5);
+
+    game.load.spritesheet('pickUpStateAnimation', 'assets/img/pick up state.png',1200,700,7);
     game.load.audio('BGM', 'assets/sounds/loop.mp3');
     game.load.audio('placing', 'assets/sounds/placing.mp3');
     game.load.audio('shooting', 'assets/sounds/shooting.mp3');
@@ -70,11 +74,11 @@ var Preloader = {
     game.load.image('blueMarble', 'assets/img/blueMarble.png');
 
     this.loadCompleted();
-	},
+  },
 
-	loadCompleted: function() {
+  loadCompleted: function() {
     this.ready = false;
-  	},
+    },
 
   create: function(){
     game.preloaderBar = game.add.sprite(game.world.centerX,game.world.centerY + 100, "preloaderBar");
@@ -83,7 +87,7 @@ var Preloader = {
     game.preloaderBar.anchor.set(0.5);
     
 
-  	game.teamTitle = game.add.sprite(game.world.centerX, game.world.centerY - 100, 'teamTitle');
+    game.teamTitle = game.add.sprite(game.world.centerX, game.world.centerY - 100, 'teamTitle');
     game.teamTitle.anchor.setTo(0.5);
 
     //place the logo
