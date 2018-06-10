@@ -1,4 +1,5 @@
 var marbleIndex = -1;
+var totalStrength = []
 
 
 /*function disableAllDrag() {
@@ -8,7 +9,7 @@ var marbleIndex = -1;
 }*/
 
 function mainShootMarble(strength, item) {
-    console.log("shot at strength: " + strength);
+    //console.log("shot at strength: " + strength);
     item.speed = strength;
     if (item.marble.type == 2 && item.marble.secondSkill == 2) {
         var nearest = 0;
@@ -24,7 +25,7 @@ function mainShootMarble(strength, item) {
                 }
             }
         }
-        console.log("nearest: " + nearest)
+        //console.log("nearest: " + nearest)
         item.angle = game.physics.arcade.angleBetween(marbles[nearest].marble, item.marble) * 180 / Math.PI + 180;
     } else {
         item.angle = game.physics.arcade.angleBetween(item.marble, game.input.mousePointer) * 180 / Math.PI + 180;
@@ -81,6 +82,10 @@ var gameMain = {
             marbles[i] = new marble(marbles[i].marble.x, marbles[i].marble.y, marbles[i].marble.type, marbles[i].marble.firstSkill, marbles[i].marble.secondSkill, i, marbles[i].marble.owner);
             //console.log(marbles[i].marble.firstSkill + " " + marbles[i].marble.secondSkill + " " + marbles[i].marble.x + " " + marbles[i].marble.y);
         }
+        selected = -1;
+
+        totalStrength.push(300);
+        totalStrength.push(300);
     }, 
 
 
@@ -95,12 +100,29 @@ var gameMain = {
                     marbles.pop();
                     marbles[marbleIndex].marble.arrowSpawned = 0;
                 }
+
+                var strength = 0;
                 
-                if (distance(marbles[marbleIndex].marble, game.input.mousePointer)*2.8 < 350) {
-                    mainShootMarble((distance(marbles[marbleIndex].marble, game.input.mousePointer)*2.5)*marbles[marbleIndex].strengthFactor, marbles[marbleIndex]);
+                if (marbles[marbleIndex].marble.type == 2 && marbles[marbleIndex].marble.secondSkill == 2) {
+                    strength = 160;
                 } else {
-                    mainShootMarble(350*marbles[marbleIndex].strengthFactor, marbles[marbleIndex]);
+                    if (distance(marbles[marbleIndex].marble, game.input.mousePointer) * 2 > 230) {
+                        strength = 230;
+                    } else {
+                        strength = distance(marbles[marbleIndex].marble, game.input.mousePointer) * 2
+                    }
                 }
+
+                if (totalStrength[turn - 1] < strength) {
+                    strength = totalStrength[turn - 1];
+                    totalStrength[turn - 1] = 0;
+                } else {
+                    totalStrength[turn - 1] -= strength;
+                }
+
+                console.log("shot at strength: " + strength);
+
+                mainShootMarble((strength + 120)*marbles[marbleIndex].strengthFactor, marbles[marbleIndex]);
 
             }
         });
@@ -182,10 +204,22 @@ var gameMain = {
                     marbles[i].marble.status = 0;
                     if (turn == 1) {
                         turn = 2;
+                        if (totalStrength[turn - 1] + 120 > 300) {
+                            totalStrength[turn - 1] = 300;
+                        } else {
+                            totalStrength[turn - 1] += 120;
+                        }
                         console.log("player " + turn + " turn");
+                        console.log("remaining strength: " + totalStrength[turn - 1])
                     } else {
                         turn = 1;
+                        if (totalStrength[turn - 1] + 120 > 300) {
+                            totalStrength[turn - 1] = 300;
+                        } else {
+                            totalStrength[turn - 1] += 120;
+                        }
                         console.log("player " + turn + " turn");
+                        console.log("remaining strength: " + totalStrength[turn - 1])
                     }
                 }
             }

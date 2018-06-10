@@ -88,8 +88,8 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
             //console.log("marble " + item.name + " selected");
             marbleIndex = item.name;
             disableSelect();
-            if (gameState = 3) {
-                console.log("arrowspanwed: " + item.arrowSpawned)
+            if (gameState == 3) {
+                //console.log("arrowspanwed: " + item.arrowSpawned)
                 if (item.arrowSpawned == 0) {
                     if (item.type != 2 || item.secondSkill != 2) {
                         var angle = game.physics.arcade.angleBetween(item, game.input.mousePointer);
