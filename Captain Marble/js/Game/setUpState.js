@@ -1,14 +1,5 @@
 var marbleIndex = -1;
 
-function allMarblesDeployed() {
-    for (var i = 0; i < marbles.length; i++) {
-        if (!insideOfArena(marbles[i].marble) || marbles[i].marble.scale.x != 1) {
-            return false;
-        }
-    }
-    return true;
-}
-
 function pointDistanceFromPointByAngle(x, y, distance, angle) {
     var x_ = x + Math.sin(angle) * distance;
     var y_ = y + Math.cos(angle) * distance;
@@ -43,10 +34,19 @@ function noDeployInProgress() {
     return true;
 }
 
-function allEndTurnTriggered() {
+/*function allEndTurnTriggered() {
     //console.log("allEndTurnTriggered function")
     for (var i = 0; i < marbles.length; i++) {
         if (marbles[i].marble.endTurnTriggered == false && marbles[i].marble.firstSkill == 1 && marbles[i].marble.type == 3) {
+            return false;
+        }
+    }
+    return true;
+}*/
+
+function allMarblesDeployed () {
+    for (var i = 0; i < marbles.length; i++) {
+        if (marbles[i].marble.status != 3) {
             return false;
         }
     }
@@ -91,11 +91,17 @@ var setUpState = {
         this.BGM.play('', 0, 0.75, true);
 
         for (var i = 0; i < marbles.length; i++) {
-            marbles[i] = new marble(marbles[i].marble.x, marbles[i].marble.y, marbles[i].marble.type, marbles[i].marble.firstSkill, marbles[i].marble.secondSkill, i, marbles[i].marble.owner);
+            marbles[i] = new marble(marbles[i].marble.x + 16, marbles[i].marble.y + 16, marbles[i].marble.type, marbles[i].marble.firstSkill, marbles[i].marble.secondSkill, i, marbles[i].marble.owner);
             marbles[i].marble.input.enableDrag();
 
             marbles[i].marble.events.onDragStop.add(function(item) {
             if (insideOfArena(item)) {
+
+                if (turn == 1) {
+                    turn = 2;
+                } else {
+                    turn = 1;
+                }
 
                 //console.log(item.type + " " + item.firstSkill + " " + item.secondSkill)
                 item.status = 1;
@@ -127,6 +133,7 @@ var setUpState = {
                     if (item.firstSkill == 1) {
                         console.log("Ranger - Sneak");
                         var angle = game.physics.arcade.angleBetween(item, game.input.mousePointer);
+                        console.log("in side of ranger");
                         marbles.push(new marble(item.x + Math.cos(angle) * 30, item.y + Math.sin(angle) * 30, 0, 0, 0, marbles.length, 0));
                         game.input.onUp.add(function(item) {
                             for (var i = 0; i < marbles.length; i++) {
@@ -164,7 +171,13 @@ var setUpState = {
         //update marble location
         updateLocation();
 
-
+        for (var i = 0; i < marbles.length; i++) {
+            if (marbles[i].marble.owner != turn || (marbles[i].marble.status == 3 && insideOfRestArea(marbles[i].marble)) || (insideOfArena(marbles[i].marble) && marbles[i].marble.status != 0)  || !noDeployInProgress()) {
+                marbles[i].marble.input.disableDrag();
+            } else {
+                marbles[i].marble.input.enableDrag();
+            }
+        }
         //==========Homemade Physics Engine Starts=============
 
         marbles.forEach(function(item) {
@@ -227,34 +240,7 @@ var setUpState = {
                 }
                 if (marbles[i].marble.status == 2) {
                     marbles[i].marble.status = 3;
-
-                    for (var j = 0; j < marbles.length; j++) {
-                        if (marbles[j].marble.type == 3 && marbles[j].marble.firstSkill == 1 && marbles[j].marble.status == 3) {
-                            console.log("Sling triggered");
-                            var nearest = 0;
-                            for (var k = 0; k < marbles.length; k++) {
-                                if (marbles[k].marble.status == 3) {
-                                    nearest = k;
-                                    break;
-                                }
-                            }
-                            
-                            for (var k = 0; k < marbles.length; k++) {
-                                if (marbles[k].marble.name != j && marbles[k].marble.status) {
-                                    if (distance(marbles[j].marble, marbles[k].marble) < distance(marbles[j].marble, marbles[nearest].marble)) {
-                                        nearest = k;
-                                    }
-                                }
-                            }
-                            
-                            if (marbles[j].marble.name != nearest) {
-                                var angle = game.physics.arcade.angleBetween(marbles[j].marble, marbles[nearest].marble);
-                                marbles.push(new marble(marbles[j].marble.x + Math.cos(angle) * 30, marbles[j].marble.y + Math.sin(angle) * 30, 0, 0, 0, marbles.length, 0));
-                            }
-                        }
-                    }
-
-                    console.log("turn end");
+                    console.log("player " + turn + " turn");
                 }
             }
             /*if (!allEndTurnTriggered() && noDeployingMarble() && noDeployInProgress()) {
@@ -285,10 +271,9 @@ var setUpState = {
         }
 
         //Print detail to console
-        /*marbles.forEach(function(item) {
-            if (distance(item.marble, game.input.mousePointer) < 28){
-                console.log();
-                console.log("marble: " + item.marble.name);
+        marbles.forEach(function(item) {
+            if (distance(item.marble, game.input.mousePointer) < 32){
+                /*console.log("marble: " + item.marble.name);
                 console.log("owner: player " + item.marble.owner);
                 console.log("location: " + item.location)
                 if (item.marble.type == 1) {
@@ -317,7 +302,7 @@ var setUpState = {
                     else if (item.marble.secondSkill == 2) {
                         console.log("Passive: firm - Return higher strength when hit");
                     }
-                }
+                }*/
                 
                 //console.log("Active: Not Implemented");
 
@@ -325,12 +310,13 @@ var setUpState = {
 
                 console.log();
             }
-        });*/
+        });
 
 
-        /*if (allMarblesDeployed()) {
+        if (allMarblesDeployed()) {
+            gameState = 3;
             game.state.start("gameMain");
-        }*/
+        }
 
         //Bar controleller
         cursors = game.input.keyboard.createCursorKeys();

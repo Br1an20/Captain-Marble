@@ -5,13 +5,15 @@ var demo;
 var select = true;
 var soundOn = true;
 var musicOn = true; 
+var turn = 1;
+var gameState = 1;
 
 function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     
     if (owner == 1) {
-        this.marble = game.add.sprite(x, y, 'purpleMarble');
-    } else {
         this.marble = game.add.sprite(x, y, 'blueMarble');
+    } else {
+        this.marble = game.add.sprite(x, y, 'purpleMarble');
     }
     this.marble.x = x;
     this.marble.y = y;
@@ -27,6 +29,7 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     this.marble.owner = owner;
     this.marble.status = 0; // 0 undeplyed   1 deploying   2 deployInProgress    3 deployed    4 dead
     this.marble.endTurnTriggered = false;
+    this.marble.arrowSpawned = 0;
     
     game.physics.arcade.enable(this.marble);
 
@@ -81,10 +84,23 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
 
     //select
     this.marble.events.onInputDown.add(function(item) {
-        if(select) {
+        if(select && insideOfArena(item) && turn == item.owner) {
             //console.log("marble " + item.name + " selected");
             marbleIndex = item.name;
             disableSelect();
+            if (gameState = 3) {
+                console.log("arrowspanwed: " + item.arrowSpawned)
+                if (item.arrowSpawned == 0) {
+                    if (item.type != 2 || item.secondSkill != 2) {
+                        var angle = game.physics.arcade.angleBetween(item, game.input.mousePointer);
+                        marbles.push(new marble(item.x + Math.cos(angle) * 30, item.y + Math.sin(angle) * 30, 0, 0, 0, marbles.length, 0));
+                    } else {
+                        console.log("spawned ball")
+                        marbles.push(new marble(game.input.mousePointer.x, game.input.mousePointer.y, 0, 0, 0, marbles.length, 0));
+                    }
+                    item.arrowSpawned = 1;
+                }
+            }
         }
     });
 }
@@ -130,8 +146,10 @@ function updateLocation () {
                 item.lastTarget = -1;
                 enterRestArea(item);
             } else {
-                item.marble.kill();
-                marbles.pop();
+                if (gameState == 2) {
+                    item.marble.kill();
+                    marbles.pop();
+                }
             }
         }
     })

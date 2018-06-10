@@ -236,6 +236,7 @@ var pickUpState = {
                 marbles[i].marble.x = marbles[i].marble.body.x;
                 marbles[i].marble.y = marbles[i].marble.body.y;
             }
+            gameState = 2;
             game.state.start("setUpState");
         }
 
