@@ -95,7 +95,7 @@ var setUpState = {
             marbles[i].marble.input.enableDrag();
 
             marbles[i].marble.events.onDragStop.add(function(item) {
-            if (insideOfArena(item)) {
+            if (insideOfArena(item) && item.scale.x == 1) {
 
                 if (turn == 1) {
                     turn = 2;
@@ -239,11 +239,21 @@ var setUpState = {
 
         for (var i = 0; i < marbles.length; i++) {
             if (marbles[i].marble.owner != turn || (marbles[i].marble.status == 3 && insideOfRestArea(marbles[i].marble)) || (insideOfArena(marbles[i].marble) && marbles[i].marble.status != 0)  || !noDeployInProgress()) {
-                marbles[i].marble.input.disableDrag();
+                if (marbles[i].marble.scale.x == 1) {
+                    marbles[i].marble.input.disableDrag();
+                }
             } else {
                 marbles[i].marble.input.enableDrag();
             }
+            if (marbles[i].marble.scale.x != 1) {
+                for (var j = 0; j < marbles.length; j++) {
+                    if (i != j) {
+                        marbles[j].marble.input.disableDrag();
+                    }
+                }
+            }
         }
+
         //==========Homemade Physics Engine Starts=============
 
         marbles.forEach(function(item) {

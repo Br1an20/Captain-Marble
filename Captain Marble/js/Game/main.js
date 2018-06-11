@@ -1,6 +1,4 @@
 var game;
-var score = 0;
-var scoreText; 
 var demo;
 var select = true;
 var soundOn = true;
@@ -73,12 +71,21 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     //uncomment this to enable drag
     this.marble.events.onDragStart.add(function(item) {
         item.scale.setTo(1.2, 1.2);
+        for (var i = 0; i < marbles.length; i++) {
+            if (item.name != i) {
+                marbles[i].marble.input.disableDrag();
+            }
+        }
     });
 
     this.marble.events.onDragStop.add(function(item) {
-        item.scale.setTo(1, 1);
-        if (insideOfArena(item)) {
-            item.input.disableDrag();
+        if (overOtherMarbles(item)) {
+
+        } else {
+            item.scale.setTo(1, 1);
+            if (insideOfArena(item)) {
+                item.input.disableDrag();
+            }
         }
     });
 
@@ -103,6 +110,20 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
             }
         }
     });
+}
+
+function overOtherMarbles(item) {
+    for (var i = 0; i < marbles.length; i++) {
+
+        if (i != item.name) {
+            if (distance(item, marbles[i].marble) < 28) {
+                console.log("you cannot place it there")
+                return true;
+            }
+        }
+
+    }
+    return false;
 }
 
 function disableSelect() {

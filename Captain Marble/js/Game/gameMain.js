@@ -39,6 +39,24 @@ function deselectMarble(item) {
     marbleIndex = -1;
 }
 
+function blueFailed() {
+    for (var i = 0; i < 5; i++) {
+        if (insideOfArena(marbles[i].marble)) {
+            return false;
+        }
+    }
+    return true
+}
+
+function purpleFailed() {
+    for (var i = 5; i < 10; i++) {
+        if (insideOfArena(marbles[i].marble)) {
+            return false;
+        }
+    }
+    return true
+}
+
 
 var gameMain = {
 
@@ -82,7 +100,7 @@ var gameMain = {
             marbles[i] = new marble(marbles[i].marble.x, marbles[i].marble.y, marbles[i].marble.type, marbles[i].marble.firstSkill, marbles[i].marble.secondSkill, i, marbles[i].marble.owner);
             //console.log(marbles[i].marble.firstSkill + " " + marbles[i].marble.secondSkill + " " + marbles[i].marble.x + " " + marbles[i].marble.y);
         }
-        selected = -1;
+        marbleIndex = -1;
 
         totalStrength.push(300);
         totalStrength.push(300);
@@ -235,6 +253,14 @@ var gameMain = {
                         console.log("remaining strength: " + totalStrength[turn - 1])
                     }
                 }
+            }
+
+            if (blueFailed()) {
+                console.log("Player2 Wins")
+            }
+
+            if (purpleFailed()) {
+                console.log("Player1 Wins")
             }
             
         }
