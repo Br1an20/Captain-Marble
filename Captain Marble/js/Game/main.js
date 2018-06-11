@@ -71,11 +71,6 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     //uncomment this to enable drag
     this.marble.events.onDragStart.add(function(item) {
         item.scale.setTo(1.2, 1.2);
-        for (var i = 0; i < marbles.length; i++) {
-            if (item.name != i) {
-                marbles[i].marble.input.disableDrag();
-            }
-        }
     });
 
     this.marble.events.onDragStop.add(function(item) {
