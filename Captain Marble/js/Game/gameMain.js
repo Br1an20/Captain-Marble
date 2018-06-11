@@ -91,6 +91,19 @@ var gameMain = {
 
      update: function () {
 
+        //Strength 
+        if (marbleIndex != -1) {
+            if (marbles[marbleIndex].marble.type == 2 && marbles[marbleIndex].marble.secondSkill == 2) {
+                console.log(160);
+            } else {
+                if (distance(marbles[marbleIndex].marble, game.input.mousePointer) * 2 > 230) {
+                    console.log(230);
+                } else {
+                    console.log(distance(marbles[marbleIndex].marble, game.input.mousePointer) * 2)
+                }
+            }
+        }
+
         //trigger shoot
         game.input.onUp.add(function(item) {
             if (marbleIndex > -1) {
@@ -173,8 +186,8 @@ var gameMain = {
                             item.angle = item.angle + Math.sin(Math.abs(diff)*Math.PI/180)*diff*2 + 180; //Determine angle difference by included angle
 
                             //determine speed by decomposed force
-                            marbles[i].speed = (item.speed/1.8 + (item.speed * Math.cos(Math.abs(diff)*Math.PI/180))/3) * marbles[i].knockBackFactor;  //Target
-                            item.speed = (item.speed/2.4 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5) * item.knockBackFactor * marbles[i].returnFactor; //Attacker
+                            marbles[i].speed = (item.speed/1.8 + (item.speed * Math.cos(Math.abs(diff)*Math.PI/180))/3) / marbles[i].knockBackResistFactor;  //Target
+                            item.speed = (item.speed/2.4 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5) / item.knockBackResistFactor * marbles[i].returnFactor; //Attacker
 
                             game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity); // move marbles 
                             game.physics.arcade.velocityFromAngle(marbles[i].angle, marbles[i].speed, marbles[i].marble.body.velocity);
@@ -216,7 +229,7 @@ var gameMain = {
                         if (totalStrength[turn - 1] + 120 > 300) {
                             totalStrength[turn - 1] = 300;
                         } else {
-                            totalStrength[turn - 1] += 120;
+                            totalStrength[turn - 1] += 150;
                         }
                         console.log("player " + turn + " turn");
                         console.log("remaining strength: " + totalStrength[turn - 1])

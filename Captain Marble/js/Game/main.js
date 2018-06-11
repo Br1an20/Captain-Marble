@@ -40,7 +40,7 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     
 
     this.strengthFactor = 1;
-    this.knockBackFactor = 1;
+    this.knockBackResistFactor = 1;
     this.frictionFactor = 1;
     this.returnFactor = 1;
 
@@ -50,7 +50,7 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
             this.strengthFactor += this.strengthFactor * 0.18;
         }
         else if (secondSkill == 2) { //Bravery
-            this.knockBackFactor -= this.knockBackFactor * 0.12;
+            this.knockBackResistFactor += this.knockBackResistFactor * 0.12;
             this.strengthFactor += this.strengthFactor * 0.08;
         }
     }
@@ -62,7 +62,7 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     }
     else if (type == 3) {
         if (secondSkill == 1) { //Steady
-            this.knockBackFactor -= this.knockBackFactor * 0.2;
+            this.knockBackResistFactor += this.knockBackResistFactor * 0.2;
         }
         else if (secondSkill == 2) { //Firm
             this.returnFactor += this.returnFactor * 0.3;

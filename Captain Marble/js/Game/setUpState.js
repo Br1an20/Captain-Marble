@@ -125,7 +125,30 @@ var setUpState = {
                         item.status = 2;
                     }
                     else if (item.firstSkill == 2) {
-                        console.log("Warrior - Warcry");
+                        console.log("Warrior - Warcry"); //Give all allies within a range of 100 8% more strength and enemies 8% less strength
+                        for (var i = 0; i < marbles.length; i++) {
+                            if (i != item.name && marbles[i].location) {
+
+                                if (distance(marbles[i].marble, item) <= 100) {
+
+                                    if (marbles[i].marble.owner == item.owner) {
+
+                                        marbles[i].strengthFactor *= 1.08;
+
+                                        console.log("changed marble[" + marbles[i].marble.name + "] strengthFactor to " + marbles[i].strengthFactor);
+
+                                    } else {
+
+                                        marbles[i].strengthFactor *= 0.92;
+
+                                        console.log("changed marble[" + marbles[i].marble.name + "] strengthFactor to " + marbles[i].strengthFactor);
+
+                                    }
+
+                                }
+
+                            }
+                        }
                         item.status = 2;
                     }
                 }
@@ -143,19 +166,62 @@ var setUpState = {
                                 }
                             }
                         });
+                        //item.status = 2;
                     }
                     else if (item.firstSkill == 2) {
-                        console.log("Ranger - Poison");
+                        console.log("Ranger - Poison"); //give enemies within range of 120 10% less strength
+
+                        for (var i = 0; i < marbles.length; i++) {
+                            if (i != item.name && marbles[i].location) {
+
+                                if (distance(marbles[i].marble, item) <= 120) {
+
+                                    if (marbles[i].marble.owner != item.owner) {
+
+                                        marbles[i].strengthFactor *= 0.9;
+
+                                        console.log("changed marble[" + marbles[i].marble.name + "] strengthFactor to " + marbles[i].strengthFactor);
+
+                                    }
+
+                                }
+
+                            }
+                        }
+                        
                         item.status = 2;
                     }
                 }
                 else if (item.type == 3) {
                     if (item.firstSkill == 1) {
-                        console.log("Castle - Sling");
+                        console.log("Castle - Solid");
                         item.status = 2;
                     }
                     else if (item.firstSkill == 2) {
-                        console.log("Castle - Towering");
+                        console.log("Castle - Towering");// Give all allies within 100 range +10% less knock back and all enemies 10% more knock back
+                        for (var i = 0; i < marbles.length; i++) {
+                            if (i != item.name && marbles[i].location) {
+
+                                if (distance(marbles[i].marble, item) <= 100) {
+
+                                    if (marbles[i].marble.owner == item.owner) {
+
+                                        marbles[i].knockBackResistFactor *= 1.08;
+
+                                        console.log("changed marble[" + marbles[i].marble.name + "] knockBackResistFactor to " + marbles[i].knockBackResistFactor);
+
+                                    } else {
+
+                                        marbles[i].knockBackResistFactor *= 0.92;
+
+                                        console.log("changed marble[" + marbles[i].marble.name + "] knockBackResistFactor to " + marbles[i].knockBackResistFactor);
+
+                                    }
+
+                                }
+
+                            }
+                        }
                         item.status = 2;
                     }
                 }
@@ -214,11 +280,12 @@ var setUpState = {
 
                             //determine speed by decomposed force
                             if (item.marble.owner != 0) {
-                                marbles[i].speed = (item.speed/2 + (item.speed * Math.cos(Math.abs(diff)*Math.PI/180))/3) * marbles[i].knockBackFactor;  //Target
-                                item.speed = (item.speed/2.5 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5) * item.knockBackFactor * marbles[i].returnFactor; //Attacker
+                                marbles[i].speed = (item.speed/2 + (item.speed * Math.cos(Math.abs(diff)*Math.PI/180))/3) / marbles[i].knockBackResistFactor;  //Target
+                                item.speed = (item.speed/2.5 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5) / item.knockBackResistFactor * marbles[i].returnFactor; //Attacker
                             } else {
                                 marbles[i].speed = 180;
                             }
+
                             game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity); // move marbles 
                             game.physics.arcade.velocityFromAngle(marbles[i].angle, marbles[i].speed, marbles[i].marble.body.velocity);
                         }
@@ -226,6 +293,14 @@ var setUpState = {
                 }
             }
         });
+
+        for (var i = 0; i < marbles.length; i++) {
+            if (marbles[i].marble.type == 3 && marbles[i].marble.firstSkill == 1) {
+                marbles[i].marble.body.velocity.x = 0;
+                marbles[i].marble.body.velocity.y = 0;
+            }
+
+        }
 
         disableSelect();
 
@@ -243,21 +318,6 @@ var setUpState = {
                     console.log("player " + turn + " turn");
                 }
             }
-            /*if (!allEndTurnTriggered() && noDeployingMarble() && noDeployInProgress()) {
-                for (var i = 0; i < marbles.length; i++) {
-                    if (marbles[i].marble.type == 3 && marbles[i].marble.firstSkill == 1 && marbles[i].marble.status == 3 && !marbles[i].endTurnTriggered) {
-                        console.log("Sling triggered");
-                        marbles[i].endTurnTriggered = true;
-                        break;
-                    }
-                }
-            }
-            if (allEndTurnTriggered() && noDeployInProgress() && noDeployingMarble()) {
-                console.log("turn end");
-                for (var i = 0; i < marbles.length; i++) {
-                    marbles[i].endTurnTriggered = false;
-                }
-            }*/
         }
 
 
@@ -308,7 +368,7 @@ var setUpState = {
 
                 
 
-                console.log();
+                //console.log();
             }
         });
 
