@@ -28,7 +28,7 @@ var Preloader = {
 
     game.load.image('cannon', 'assets/img/cannon.png');
     game.load.image('bow', 'assets/img/bow.png'); 
-
+    game.load.image('pointer', 'assets/img/arrow.png');
     game.load.image('setting', 'assets/img/settingUp.png');
   
     game.load.image('gameBoardMain', 'assets/img/GameBoardMain.png');
@@ -74,12 +74,13 @@ var Preloader = {
     game.load.spritesheet('rushDetail', 'assets/img/Rush detail.png',121,48,5);
 
     game.load.spritesheet('pickUpStateAnimation', 'assets/img/pick up state.png',1200,700,8);
-    game.load.audio('BGM', 'assets/sounds/loop.mp3');
+   
     game.load.audio('placing', 'assets/sounds/placing.mp3');
     game.load.audio('shooting', 'assets/sounds/shooting.mp3');
     game.load.audio('startAndEnd', 'assets/sounds/startAndEnd.mp3');
     game.load.audio('choose', 'assets/sounds/choose.mp3');
     game.load.audio('hit', 'assets/sounds/hit.mp3');
+    game.load.audio('mainBGM', 'assets/sounds/mainBGM.mp3');
 
     game.load.image('blackMarble', 'assets/img/black-sphere.png');
     game.load.image('fireMarble', 'assets/img/fire-sphere.png');

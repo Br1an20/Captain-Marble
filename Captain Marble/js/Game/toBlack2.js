@@ -22,6 +22,7 @@ var toBlack2 = {
 
     gameReady:function(){
       //if(this.cache.isSoundDecoded('BGM') && this.ready == true){
+      
       this.state.start('gameMain');
 //}
   },

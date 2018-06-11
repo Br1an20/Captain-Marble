@@ -1,8 +1,7 @@
 var game;
 var demo;
 var select = true;
-var soundOn = true;
-var musicOn = true; 
+ 
 var turn = 1;
 var gameState = 1;
 
@@ -10,8 +9,16 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     
     if (owner == 1) {
         this.marble = game.add.sprite(x, y, 'blueMarble');
-    } else {
+    }
+    else if (owner == 2) {
         this.marble = game.add.sprite(x, y, 'purpleMarble');
+    } else {
+        if (type == 4) { // pointing arrow sprite
+            this.marble = game.add.sprite(x,y,'pointer');
+        }
+        else if (type == 5) { // 
+
+        }
     }
     this.marble.x = x;
     this.marble.y = y;
@@ -71,6 +78,8 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
     //uncomment this to enable drag
     this.marble.events.onDragStart.add(function(item) {
         item.scale.setTo(1.2, 1.2);
+        choose = game.add.audio('choose');
+        choose.play('', 0, 1, false);
     });
 
     this.marble.events.onDragStop.add(function(item) {
@@ -80,6 +89,8 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
             item.scale.setTo(1, 1);
             if (insideOfArena(item)) {
                 item.input.disableDrag();
+                placing = game.add.audio('placing');
+                placing.play('', 0, 1, false);
             }
         }
     });
@@ -95,7 +106,7 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
                 if (item.arrowSpawned == 0) {
                     if (item.type != 2 || item.secondSkill != 2) {
                         var angle = game.physics.arcade.angleBetween(item, game.input.mousePointer);
-                        marbles.push(new marble(item.x + Math.cos(angle) * 30, item.y + Math.sin(angle) * 30, 0, 0, 0, marbles.length, 0));
+                        marbles.push(new marble(item.x + Math.cos(angle) * 30, item.y + Math.sin(angle) * 30, 4, 0, 0, marbles.length, 0));
                     } else {
                         console.log("spawned ball")
                         marbles.push(new marble(game.input.mousePointer.x, game.input.mousePointer.y, 0, 0, 0, marbles.length, 0));
@@ -212,5 +223,11 @@ window.onload = function () {
     game.state.add("pickUpStateAnimation", pickUpStateAnimation);
     game.state.add("setUpState", setUpState);
     game.state.add("pickUpState", pickUpState);
+    game.state.add("demo1", demo1);
+    game.state.add("demo2", demo2);
+    game.state.add("demo3", demo3);
+    game.state.add("gameOverPurple", gameOverPurple);
+    game.state.add("gameOverBlue", gameOverBlue);
+    game.state.add("creditAnimation", creditAnimation);
     game.state.start("Boot");
 }

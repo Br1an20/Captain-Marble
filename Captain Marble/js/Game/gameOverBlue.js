@@ -29,12 +29,25 @@ var gameOverBlue = {
       this.buttonPlayAgain = game.add.button(500, 600,"restart", this.replay,this,0);
       this.buttonPlayAgain.anchor.set(0.5,0.5);
 
-      this.credit = game.add.button(700, 600,"credit", this.replay,this,0);
+      this.credit = game.add.button(700, 600,"credit", this.credit,this,0);
       this.credit.anchor.set(0.5,0.5);
 //}
   },
+      credit:function(){
+        game.state.start("creditAnimation");
+      },
       replay:function(){
+
+        select = true;
+        turn = 1;
+        gameState = 1;
+        marbles = [];
+        totalStrength = [];
+        marbleIndex = -1;
+        index = 0;
+        selected = "none"
        
+        mainBGM.stop();
         game.state.start("Boot");
     },
 

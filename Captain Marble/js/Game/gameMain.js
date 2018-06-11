@@ -31,6 +31,8 @@ function mainShootMarble(strength, item) {
         item.angle = game.physics.arcade.angleBetween(item.marble, game.input.mousePointer) * 180 / Math.PI + 180;
     }
     game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
+    shooting = game.add.audio('shooting');
+    shooting.play('', 0, 1, false);
     item.marble.status = 1;
     deselectMarble();
 }
@@ -38,7 +40,6 @@ function mainShootMarble(strength, item) {
 function deselectMarble(item) {
     marbleIndex = -1;
 }
-
 function blueFailed() {
     for (var i = 0; i < 5; i++) {
         if (insideOfArena(marbles[i].marble)) {
@@ -58,6 +59,7 @@ function purpleFailed() {
 }
 
 
+
 var gameMain = {
 
     preload: function () {
@@ -73,14 +75,15 @@ var gameMain = {
         this.player1 = game.add.sprite(135,30,'player1');
         this.player1.scale.set(2);
         this.player1.anchor.set(0.5);
-        this.player1.animations.add('player1Clicked',[0,1],2,true);
-        this.player1.animations.play('player1Clicked');
+        this.player1.animations.add('player1On',[0],1,true);
+        this.player1.animations.add('player1Off',[1],1,true);
+        
         //player2 image
         this.player2 = game.add.image(1065,30,'player2');
         this.player2.scale.set(2);
         this.player2.anchor.set(0.5);
-        this.player2.animations.add('player2Clicked',[0,1],2,true);
-        this.player2.animations.play('player2Clicked');
+        this.player2.animations.add('player2On',[1],1,true);
+        this.player2.animations.add('player2Off',[0],1,true);
         //Bar1
         this.bar1Mpty = game.add.image(0,60,'blueBarMpty');        
         this.bar1Mpty.scale.set(0.2,0.5);
@@ -92,15 +95,14 @@ var gameMain = {
         this.bar2Filed  = game.add.image(1010,60,'prBarFilled');
         this.bar2Filed.scale.set(0.2,0.5);
 
-        this.BGM = game.add.audio('BGM');
-        this.BGM.play('', 0, 0.75, true);
+        
 
         for (var i = 0; i < marbles.length; i++) {
             //function marble (x, y, type, firstSkill, secondSkill, index, owner) {};
             marbles[i] = new marble(marbles[i].marble.x, marbles[i].marble.y, marbles[i].marble.type, marbles[i].marble.firstSkill, marbles[i].marble.secondSkill, i, marbles[i].marble.owner);
             //console.log(marbles[i].marble.firstSkill + " " + marbles[i].marble.secondSkill + " " + marbles[i].marble.x + " " + marbles[i].marble.y);
         }
-        marbleIndex = -1;
+        selected = -1;
 
         totalStrength.push(300);
         totalStrength.push(300);
@@ -108,19 +110,50 @@ var gameMain = {
 
 
      update: function () {
+        //console.log(game.input.mousePointer.x,game.input.mousePointer.y);
 
         //Strength 
-        if (marbleIndex != -1) {
+        if (marbleIndex > -1) {
+
+            var strength = 0;
+            
             if (marbles[marbleIndex].marble.type == 2 && marbles[marbleIndex].marble.secondSkill == 2) {
-                console.log(160);
+                strength = 160;
             } else {
                 if (distance(marbles[marbleIndex].marble, game.input.mousePointer) * 2 > 230) {
-                    console.log(230);
+                    strength = 230;
                 } else {
-                    console.log(distance(marbles[marbleIndex].marble, game.input.mousePointer) * 2)
+                    strength = distance(marbles[marbleIndex].marble, game.input.mousePointer) * 2
                 }
             }
+
+            if (totalStrength[turn - 1] < strength) {
+                remainingEnergy = 0
+            } else {
+                remainingEnergy = (totalStrength[turn - 1] - strength)/300
+            }
+
+            if (turn == 1) {
+                this.bar1Filed.width = 186 * remainingEnergy;
+            } else {
+                this.bar2Filed.width = 186 * remainingEnergy;
+            }
+
+            
+            /*var remainingEnergy1 = (totalStrength[turn - 1] - strength)/3
+            if(remainingEnergy1 < 0){
+                remainingEnergy1 = 0;
+            }
+
+            this.bar1Filed.width = 186 * remainingEnergy1/100;
+            console.log("Strength Bar Remaining: " + remainingEnergy1 + "%");
+
+            var remainingEnergy2 = (totalStrength[turn]- strength)/3
+            this.bar2Filed.width = 186 * remainingEnergy1/100;
+            console.log("Strength Bar Remaining: " + remainingEnergy2 + "%");*/
         }
+
+  
 
         //trigger shoot
         game.input.onUp.add(function(item) {
@@ -208,6 +241,8 @@ var gameMain = {
                             item.speed = (item.speed/2.4 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5) / item.knockBackResistFactor * marbles[i].returnFactor; //Attacker
 
                             game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity); // move marbles 
+                            hit = game.add.audio('hit');
+                            hit.play('', 0, 1, false);
                             game.physics.arcade.velocityFromAngle(marbles[i].angle, marbles[i].speed, marbles[i].marble.body.velocity);
                         }
                     }
@@ -234,7 +269,10 @@ var gameMain = {
                 if (marbles[i].marble.status == 1) {
                     marbles[i].marble.status = 0;
                     if (turn == 1) {
+
                         turn = 2;
+                        this.player1.animations.play('player1Off',true);
+                        this.player2.animations.play('player2On',true);
                         if (totalStrength[turn - 1] + 120 > 300) {
                             totalStrength[turn - 1] = 300;
                         } else {
@@ -242,27 +280,37 @@ var gameMain = {
                         }
                         console.log("player " + turn + " turn");
                         console.log("remaining strength: " + totalStrength[turn - 1])
+                        this.bar2Filed.width = 186 * (totalStrength[turn - 1]/300);
                     } else {
                         turn = 1;
+                        this.player1.animations.play('player1On',true);
+                        this.player2.animations.play('player2Off',true);
+
                         if (totalStrength[turn - 1] + 120 > 300) {
                             totalStrength[turn - 1] = 300;
                         } else {
-                            totalStrength[turn - 1] += 150;
+                            totalStrength[turn - 1] += 120;
                         }
+                        
                         console.log("player " + turn + " turn");
                         console.log("remaining strength: " + totalStrength[turn - 1])
+                        this.bar1Filed.width = 186 * (totalStrength[turn - 1]/300);
                     }
                 }
             }
-
+            
             if (blueFailed()) {
+
                 console.log("Player2 Wins")
+                game.state.start('gameOverPurple');
+
             }
 
             if (purpleFailed()) {
                 console.log("Player1 Wins")
+                game.state.start('gameOverBlue');
+
             }
-            
         }
 
          //==========Homemade Physics Engine Ends=============

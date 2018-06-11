@@ -13,6 +13,8 @@ function shootMarble(strength, angle, item) {
     item.speed = strength;
     item.angle = angle;
     game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
+    shooting = game.add.audio('shooting');
+    shooting.play('', 0, 1, false);
     deselectMarble();
 }
 
@@ -60,8 +62,6 @@ var setUpState = {
     },
 
     create: function () {
-        this.try1 = game.image.add(item.marble.body.x,item.marble.body.y -50, 'rushDetail' );
-        this.try1.alpha = 0.5;
 
         this.gameBoardMain = game.add.image(0, 0, 'gameBoard');
         this.trashCanBlue = game.add.image(0,620,'blueTrashCan');
@@ -90,8 +90,8 @@ var setUpState = {
         this.bar2Filed  = game.add.image(1010,60,'prBarFilled');
         this.bar2Filed.scale.set(0.2,0.5);
 
-        this.BGM = game.add.audio('BGM');
-        this.BGM.play('', 0, 0.75, true);
+        mainBGM = game.add.audio('mainBGM');
+        mainBGM.play('', 0, 0.1, true);
 
         for (var i = 0; i < marbles.length; i++) {
             marbles[i] = new marble(marbles[i].marble.x + 16, marbles[i].marble.y + 16, marbles[i].marble.type, marbles[i].marble.firstSkill, marbles[i].marble.secondSkill, i, marbles[i].marble.owner);
@@ -312,6 +312,8 @@ var setUpState = {
                             }
 
                             game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity); // move marbles 
+                            hit = game.add.audio('hit');
+                            hit.play('', 0, 1, false);
                             game.physics.arcade.velocityFromAngle(marbles[i].angle, marbles[i].speed, marbles[i].marble.body.velocity);
                         }
                     }
@@ -433,6 +435,7 @@ var setUpState = {
 
         if (allMarblesDeployed()) {
             gameState = 3;
+            //mainBGM.stop();
             game.state.start("toBlack2");
         }
 

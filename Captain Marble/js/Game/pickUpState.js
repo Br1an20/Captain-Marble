@@ -10,6 +10,9 @@ function newButton (x, y, type) {
 
 function buttonPressed(item) {
 
+    choose = game.add.audio('choose');
+    choose.play('', 0, 1, false);
+
     var passive;
     var active;
     var owner = 1;
@@ -147,6 +150,9 @@ var pickUpState = {
     create: function () {
         //game.title = game.add.sprite(game.world.centerX, game.world.centerY - 100, 'title');
         //game.title.anchor.setTo(0.5);
+            
+        BGM = game.add.audio('startAndEnd');
+        BGM.play('', 0, 0.1, true);
         this.pickUpBackground = game.add.image(0,0 ,'pickUpBackground');
 
         buttons.push(new newButton(272, 140, "rush"));
@@ -187,7 +193,7 @@ var pickUpState = {
         this.poisonDetail.anchor.setTo(0.5);
         this.poisonDetail.alpha = 0.5; 
 
-        this.sneakDetail = game.add.image(555,250,"sneakDetail");
+        this.sneakDetail = game.add.image(555,80,"sneakDetail");
         this.sneakDetail.anchor.setTo(0.5);
         this.sneakDetail.alpha = 0.5; 
 
@@ -217,11 +223,7 @@ var pickUpState = {
         this.firmDetail.anchor.setTo(0.5);
         this.firmDetail.alpha = 0.5; 
 
-        
-
-
-        this.BGM = game.add.audio('startAndEnd');
-        this.BGM.play('', 0, 0.75, true);
+    
     },
 
     update: function() {
@@ -368,6 +370,7 @@ var pickUpState = {
                 marbles[i].marble.y = marbles[i].marble.body.y;
             }
             gameState = 2;
+            BGM.stop();
             game.state.start("toBlack");
         }
 

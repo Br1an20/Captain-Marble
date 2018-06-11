@@ -23,6 +23,7 @@ var toBlack = {
 
     gameReady:function(){
       //if(this.cache.isSoundDecoded('BGM') && this.ready == true){
+    
       this.state.start('setUpState');
 //}
   },

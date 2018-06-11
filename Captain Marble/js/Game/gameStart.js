@@ -23,18 +23,16 @@ var gameStart = {
         this.demoStart.anchor.set(0.5);
 
 
-        this.BGM = game.add.audio('startAndEnd');
-        this.BGM.play('', 0, 0.75, true);
+        BGM = game.add.audio('startAndEnd');
+        
     }, 
 
     startDemo: function(){
-        this.BGM.stop();
-        game.state.start("gameMainDemo")
+        game.state.start("demo1")
     },
     startGame:function(){
         this.buttonStart.animations.add('clicked',[1],1);
         this.buttonStart.animations.play('clicked',true);
-        this.BGM.stop();
     	game.state.start("pickUpState");
     },
      update: function () {
