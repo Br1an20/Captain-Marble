@@ -16,9 +16,6 @@ var gameStart = {
         this.gameStart.animations.add('startAnimationPlayed',[0,1,2,3,4,5,6,7,8],2);
         this.gameStart.animations.play('startAnimationPlayed',true);
 
-        this.buttonTest = game.add.button(game.world.centerX + 480, game.world.centerY - 100,"testPlay", this.startTest,this,0);
-        this.buttonTest.anchor.set(0.5,0.5);
-
     	this.buttonStart = game.add.button(game.world.centerX + 480, game.world.centerY,"startButton", this.startGame,this,0);
     	this.buttonStart.anchor.set(0.5,0.5);
 
@@ -29,10 +26,7 @@ var gameStart = {
         this.BGM = game.add.audio('startAndEnd');
         this.BGM.play('', 0, 0.75, true);
     }, 
-    startTest: function(){
-        this.BGM.stop();
-        game.state.start("pickUpState");
-    },
+
     startDemo: function(){
         this.BGM.stop();
         game.state.start("gameMainDemo")
@@ -41,7 +35,7 @@ var gameStart = {
         this.buttonStart.animations.add('clicked',[1],1);
         this.buttonStart.animations.play('clicked',true);
         this.BGM.stop();
-    	game.state.start("gameMain");
+    	game.state.start("pickUpState");
     },
      update: function () {
     }

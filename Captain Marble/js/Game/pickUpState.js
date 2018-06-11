@@ -4,7 +4,7 @@ var index = 0;
 buttons = [];
 
 function newButton (x, y, type) {
-    this.button = game.add.button(x, y, type, buttonPressed,this,0,1);
+    this.button = game.add.button(x, y, type, buttonPressed,this,1,1,0);
     this.button.anchor.setTo(0.5, 0.5);
 }
 
@@ -162,15 +162,146 @@ var pickUpState = {
         buttons.push(new newButton(962, 140, "steady"));
         buttons.push(new newButton(962, 190, "firm"));
 
+
         this.pickUpStateAnimation = game.add.sprite(0,0,'pickUpStateAnimation');
-        this.pickUpStateAnimation.animations.add('play',[0,1,2,3,4,5,6],7);
+        this.pickUpStateAnimation.animations.add('play',[0,1,2,3,4,5,6,7],7);
         this.pickUpStateAnimation.animations.play('play',true);
+
+        this.rushDetail = game.add.image(272,80,"rushDetail");
+        this.rushDetail.anchor.setTo(0.5);
+        this.rushDetail.alpha = 0; 
+
+        this.warcryDetail = game.add.image(272,250 ,"warcryDetail");
+        this.warcryDetail.anchor.setTo(0.5);
+        this.warcryDetail.alpha = 0.5; 
+
+        this.smiteDetail = game.add.image(385,80,"smiteDetail");
+        this.smiteDetail.anchor.setTo(0.5);
+        this.smiteDetail.alpha = 0.5; 
+
+        this.braveryDetail = game.add.image(385,250,"braveryDetail");
+        this.braveryDetail.anchor.setTo(0.5);
+        this.braveryDetail.alpha = 0.5; 
+
+        this.poisonDetail = game.add.image(555,250,"poisonDetail");
+        this.poisonDetail.anchor.setTo(0.5);
+        this.poisonDetail.alpha = 0.5; 
+
+        this.sneakDetail = game.add.image(555,250,"sneakDetail");
+        this.sneakDetail.anchor.setTo(0.5);
+        this.sneakDetail.alpha = 0.5; 
+
+        this.swiftDetail = game.add.image(668,80,"swiftDetail");
+        this.swiftDetail.anchor.setTo(0.5);
+        this.swiftDetail.alpha = 0.5; 
+
+        this.accurateDetail = game.add.image(668,250,"accurateDetail");
+        this.accurateDetail.anchor.setTo(0.5);
+        this.accurateDetail.alpha = 0.5; 
+
+        this.slingDetail = game.add.image(849,80,"slingDetail");
+        this.slingDetail.anchor.setTo(0.5);
+        this.slingDetail.alpha = 0.5; 
+
+        this.toweringDetail = game.add.image(849,250,"toweringDetail");
+        this.toweringDetail.anchor.setTo(0.5);
+        this.toweringDetail.alpha = 0.5; 
+
+
+        this.steadyDetail = game.add.image(962,80,"steadyDetail");
+        this.steadyDetail.anchor.setTo(0.5);
+        this.steadyDetail.alpha = 0.5; 
+
+
+        this.firmDetail = game.add.image(962,250,"firmDetail");
+        this.firmDetail.anchor.setTo(0.5);
+        this.firmDetail.alpha = 0.5; 
+
+        
+
 
         this.BGM = game.add.audio('startAndEnd');
         this.BGM.play('', 0, 0.75, true);
     },
 
     update: function() {
+
+
+        //console.log(game.input.mousePointer.x,game.input.mousePointer.y);
+        if(game.input.mousePointer.x >237 &&game.input.mousePointer.x < 306 && game.input.mousePointer.y >124 && game.input.mousePointer.y < 154 ){
+            this.rushDetail.alpha = 1;
+        }else{
+            this.rushDetail.alpha = 0;
+        }
+
+        if(game.input.mousePointer.x >237 &&game.input.mousePointer.x < 306 && game.input.mousePointer.y >175 && game.input.mousePointer.y < 204 ){
+            this.warcryDetail.alpha = 1;
+        }else{
+            this.warcryDetail.alpha = 0;
+        }
+
+        if(game.input.mousePointer.x >350 &&game.input.mousePointer.x < 420 && game.input.mousePointer.y >124 && game.input.mousePointer.y < 154 ){
+            this.smiteDetail.alpha = 1;
+        }else{
+            this.smiteDetail.alpha = 0;
+        }
+
+        if(game.input.mousePointer.x >350 &&game.input.mousePointer.x < 420 && game.input.mousePointer.y >175 && game.input.mousePointer.y < 204 ){
+            this.braveryDetail.alpha = 1;
+        }else{
+            this.braveryDetail.alpha = 0;
+        }
+
+        if(game.input.mousePointer.x >520 &&game.input.mousePointer.x < 590 && game.input.mousePointer.y >124 && game.input.mousePointer.y < 154 ){
+            this.sneakDetail.alpha = 1;
+        }else{
+            this.sneakDetail.alpha = 0;
+        }
+
+        if(game.input.mousePointer.x >520 &&game.input.mousePointer.x < 590 && game.input.mousePointer.y >175 && game.input.mousePointer.y < 204 ){
+            this.poisonDetail.alpha = 1;
+        }else{
+            this.poisonDetail.alpha = 0;
+        }
+
+        if(game.input.mousePointer.x >630 &&game.input.mousePointer.x < 700 && game.input.mousePointer.y >124 && game.input.mousePointer.y < 154 ){
+            this.swiftDetail.alpha = 1;
+        }else{
+            this.swiftDetail.alpha = 0;
+        }
+
+
+        if(game.input.mousePointer.x >630 &&game.input.mousePointer.x < 700 && game.input.mousePointer.y >175 && game.input.mousePointer.y < 204 ){
+            this.accurateDetail.alpha = 1;
+        }else{
+            this.accurateDetail.alpha = 0;
+        }
+
+
+        if(game.input.mousePointer.x >815 &&game.input.mousePointer.x < 883 && game.input.mousePointer.y >124 && game.input.mousePointer.y < 154 ){
+            this.slingDetail.alpha = 1;
+        }else{
+            this.slingDetail.alpha = 0;
+        }
+
+        if(game.input.mousePointer.x >815 &&game.input.mousePointer.x < 883 && game.input.mousePointer.y >175 && game.input.mousePointer.y < 204 ){
+            this.toweringDetail.alpha = 1;
+        }else{
+            this.toweringDetail.alpha = 0;
+        }
+
+        if(game.input.mousePointer.x >925 &&game.input.mousePointer.x < 996 && game.input.mousePointer.y >124 && game.input.mousePointer.y < 154 ){
+            this.steadyDetail.alpha = 1;
+        }else{
+            this.steadyDetail.alpha = 0;
+        }
+
+        if(game.input.mousePointer.x >925 &&game.input.mousePointer.x < 996 && game.input.mousePointer.y >175 && game.input.mousePointer.y < 204 ){
+            this.firmDetail.alpha = 1;
+        }else{
+            this.firmDetail.alpha = 0;
+        }
+
 
         //update marble location
         updateLocation();
@@ -237,7 +368,7 @@ var pickUpState = {
                 marbles[i].marble.y = marbles[i].marble.body.y;
             }
             gameState = 2;
-            game.state.start("setUpState");
+            game.state.start("toBlack");
         }
 
     }

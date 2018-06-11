@@ -43,6 +43,20 @@ var Preloader = {
     game.load.spritesheet('player2', 'assets/img/player2.png',132,60,2);
     game.load.spritesheet('sample4', 'assets/img/sample4.png',55,60);
 
+    game.load.image('warcryDetail', 'assets/img/Warcry detail.png');
+    game.load.image('toweringDetail', 'assets/img/Tower detail.png');
+    game.load.image('swiftDetail', 'assets/img/Swift detail.png');
+    game.load.image('steadyDetail', 'assets/img/Steady detail.png');
+    game.load.image('sneakDetail', 'assets/img/Sneak detail.png');
+    game.load.image('smiteDetail', 'assets/img/Smite detail.png');
+    game.load.image('slingDetail', 'assets/img/Sling detail.png');
+    game.load.image('rushDetail', 'assets/img/Rush detail.png');
+    game.load.image('poisonDetail', 'assets/img/Poison detail.png');
+    game.load.image('firmDetail', 'assets/img/Firm detail.png');
+    game.load.image('braveryDetail', 'assets/img/Bravery detail.png');
+    game.load.image('accurateDetail', 'assets/img/Accurate detail.png');
+
+
     game.load.spritesheet('warcry', 'assets/img/Warcry skill name.png',71,31,2);
     game.load.spritesheet('towering', 'assets/img/Tower skill name.png',71,31,2);
     game.load.spritesheet('swift', 'assets/img/Swift skill name.png',71,31,2);
@@ -59,7 +73,7 @@ var Preloader = {
 
     game.load.spritesheet('rushDetail', 'assets/img/Rush detail.png',121,48,5);
 
-    game.load.spritesheet('pickUpStateAnimation', 'assets/img/pick up state.png',1200,700,7);
+    game.load.spritesheet('pickUpStateAnimation', 'assets/img/pick up state.png',1200,700,8);
     game.load.audio('BGM', 'assets/sounds/loop.mp3');
     game.load.audio('placing', 'assets/sounds/placing.mp3');
     game.load.audio('shooting', 'assets/sounds/shooting.mp3');

@@ -208,6 +208,7 @@ window.onload = function () {
     game.state.add("gameOver2", gameOver2);
     game.state.add("gameStart", gameStart);
     game.state.add("toBlack", toBlack);
+    game.state.add("toBlack2", toBlack2);
     game.state.add("pickUpStateAnimation", pickUpStateAnimation);
     game.state.add("setUpState", setUpState);
     game.state.add("pickUpState", pickUpState);

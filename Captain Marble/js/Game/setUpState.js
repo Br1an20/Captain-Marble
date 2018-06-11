@@ -60,6 +60,8 @@ var setUpState = {
     },
 
     create: function () {
+        this.try1 = game.image.add(item.marble.body.x,item.marble.body.y -50, 'rushDetail' );
+        this.try1.alpha = 0.5;
 
         this.gameBoardMain = game.add.image(0, 0, 'gameBoard');
         this.trashCanBlue = game.add.image(0,620,'blueTrashCan');
@@ -68,14 +70,15 @@ var setUpState = {
         this.player1 = game.add.sprite(135,30,'player1');
         this.player1.scale.set(2);
         this.player1.anchor.set(0.5);
-        this.player1.animations.add('player1Clicked',[0,1],2,true);
-        this.player1.animations.play('player1Clicked');
+        this.player1.animations.add('player1On',[0],1,true);
+        this.player1.animations.add('player1Off',[1],1,true);
+        
         //player2 image
         this.player2 = game.add.image(1065,30,'player2');
         this.player2.scale.set(2);
         this.player2.anchor.set(0.5);
-        this.player2.animations.add('player2Clicked',[0,1],2,true);
-        this.player2.animations.play('player2Clicked');
+        this.player2.animations.add('player2On',[1],1,true);
+        this.player2.animations.add('player2Off',[0],1,true);
         //Bar1
         this.bar1Mpty = game.add.image(0,60,'blueBarMpty');        
         this.bar1Mpty.scale.set(0.2,0.5);
@@ -229,11 +232,23 @@ var setUpState = {
             }
     });
         }
+
+        this.fromBlack = game.add.sprite(0,0,'fromBlack');
+        this.fromBlack.animations.add('play',[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],10);
+        this.fromBlack.animations.play('play',true);
     }, 
 
 
      update: function () {
-
+               if (turn == 1) {
+            this.player1.animations.play('player1On');
+            this.player2.animations.play('player2Off');
+                    
+                } else if(turn ==2) {
+            this.player2.animations.play('player2On');
+            this.player1.animations.play('player1Off');
+                    
+                }
         //update marble location
         updateLocation();
 
@@ -342,37 +357,70 @@ var setUpState = {
 
         //Print detail to console
         marbles.forEach(function(item) {
-            if (distance(item.marble, game.input.mousePointer) < 32){
+            if (distance(item.marble, game.input.mousePointer) < 32 && item.marble.scale.x == 1){
                 /*console.log("marble: " + item.marble.name);
                 console.log("owner: player " + item.marble.owner);
-                console.log("location: " + item.location)
+                console.log("location: " + item.location)*/
+                console.log("Location: (" + item.marble.body.x + ", " + item.marble.body.y + ")");
+               
                 if (item.marble.type == 1) {
                     console.log("type: Warrior");
-                    if (item.marble.secondSkill == 1) {
-                        console.log("Passive: Smite - Much higher strength");
+                    if (item.marble.firstSkill == 1) {
+                        if (item.marble.secondSkill == 1 ){
+                                this.image.add(item.marble.body.x,item.marble.body.y -50, 'rushDetail' );
+                            console.log("Warrior - rush - smite");
+                        } else {
+                            console.log("Warrior - rush - bravery");
+                        }
+                        
                     }
-                    else if (item.marble.secondSkill == 2) {
-                        console.log("Passive: Bravery - Receive less knock back and higher strength");
+                    else if (item.marble.firstSkill == 2) {
+                        if (item.marble.secondSkill == 1) {
+                            console.log("Warrior - Warcry - smite");
+                        } else {
+                            console.log("Warrior - Warcry - smite");
+                        }
+                        
                     }
                 } 
                 else if (item.marble.type == 2) {
                     console.log("type: Ranger");
-                    if (item.marble.secondSkill == 1) {
-                        console.log("Passive: Swift - Less friction and higher strength");
+                    if (item.marble.firstSkill == 1) {
+                        if (item.marble.secondSkill == 1) {
+                            console.log("Ranger - Sneak - Swift");
+                        } else {
+                            console.log("Ranger - Sneak - Accurate");
+                        }
+                        
                     }
-                    else if (item.marble.secondSkill == 2) {
-                        console.log("Passive: Accurate - Fire to the center of the nearest marble to mousePointer");
+                    else if (item.marble.firstSkill == 2) {
+                        if (item.marble.secondSkill == 1) {
+                            console.log("Ranger - Poison - Swift");
+                        } else {
+                            console.log("Ranger - Poison - Accurateh");
+                        }
+                        
                     }
                 }
                 else if (item.marble.type == 3) {
                     console.log("type: Castle");
-                    if (item.marble.secondSkill == 1) {
-                        console.log("Passive: Steady - Receive much less knock back");
+                    if (item.marble.firstSkill == 1) {
+                        if (item.marble.secondSkill == 1) {
+                            console.log("Castle - Solid - Steady");
+                        } else {
+                            console.log("Castle - Solid - Firm");
+                        }
+                        
                     }
-                    else if (item.marble.secondSkill == 2) {
-                        console.log("Passive: firm - Return higher strength when hit");
+                    else if (item.marble.firstSkill == 2) {
+                        if (item.marble.secondSkill == 1) {
+                            console.log("Castle - Towering - Steady");
+                        } else {
+                            console.log("Castle - Towering - Firm");
+                        }
+                        
                     }
-                }*/
+                }
                 
                 //console.log("Active: Not Implemented");
 
@@ -385,7 +433,7 @@ var setUpState = {
 
         if (allMarblesDeployed()) {
             gameState = 3;
-            game.state.start("gameMain");
+            game.state.start("toBlack2");
         }
 
         //Bar controleller

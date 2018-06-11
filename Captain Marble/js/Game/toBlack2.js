@@ -1,5 +1,5 @@
 var timer;
-var toBlack = {
+var toBlack2 = {
 
     preload: function () {
 
@@ -12,9 +12,8 @@ var toBlack = {
     this.timer.loop(1000, this.gameReady, this);
     this.timer.start();
 
-    this.pickUpStateAnimation = game.add.sprite(0,0,'pickUpStateAnimation');
-    this.pickUpStateAnimation.animations.add('play',[7],7);
-    this.pickUpStateAnimation.animations.play('play',true);
+    this.pickUpStateAnimation = game.add.sprite(0,0,'gameBoard');
+
  
 
     this.toBlack = game.add.sprite(0,0,'toBlack');
@@ -23,7 +22,7 @@ var toBlack = {
 
     gameReady:function(){
       //if(this.cache.isSoundDecoded('BGM') && this.ready == true){
-      this.state.start('setUpState');
+      this.state.start('gameMain');
 //}
   },
      update: function () {
