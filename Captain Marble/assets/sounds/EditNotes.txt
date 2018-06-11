@@ -1,0 +1,6 @@
+main 76 84
+preloader 62-72
+gamestart 29-46
+pickupstate 13,14 243
+setupstate 16,17 92,93 225,226
+gamemain 35,36 181,182
