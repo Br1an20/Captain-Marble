@@ -160,11 +160,25 @@ var setUpState = {
                         console.log("Ranger - Sneak");
                         var angle = game.physics.arcade.angleBetween(item, game.input.mousePointer);
                         console.log("in side of ranger");
-                        marbles.push(new marble(item.x + Math.cos(angle) * 30, item.y + Math.sin(angle) * 30, 0, 0, 0, marbles.length, 0));
+
+                        marbles.push(new marble(item.x + Math.cos(angle) * 33, item.y + Math.sin(angle) * 33, 5, 0, 0, marbles.length, 0)); //actual bow spawn
+
                         game.input.onUp.add(function(item) {
+                           
+                            marbles[marbles.length-2].marble.animations.play('arrowAnimation2',true);
+
+                            // she chu 
                             for (var i = 0; i < marbles.length; i++) {
                                 if (marbles[i].marble.status == 1 && marbles[i].marble.type == 2 && marbles[i].marble.firstSkill == 1) {
                                     marbles[i].marble.status = 2;
+
+                                    var x_ = marbles[i].marble.x + Math.cos(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer)) * 35
+                                    var y_ = marbles[i].marble.y + Math.sin(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer)) * 35
+
+                                    marbles.push(new marble(x_, y_, 6, 0, 0, marbles.length, 0)); // empty bow spawn
+
+                                    marbles[marbles.length-1].marble.angle = game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer) * 180/Math.PI + 90;
+
                                     shootMarble(600, game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer) * 180 / Math.PI, marbles[marbles.length - 1]);
                                 }
                             }
@@ -240,15 +254,15 @@ var setUpState = {
 
 
      update: function () {
-               if (turn == 1) {
+        if (turn == 1) {
             this.player1.animations.play('player1On');
             this.player2.animations.play('player2Off');
-                    
-                } else if(turn ==2) {
+        } else if (turn ==2) {
             this.player2.animations.play('player2On');
-            this.player1.animations.play('player1Off');
-                    
-                }
+            this.player1.animations.play('player1Off');  
+        }
+
+
         //update marble location
         updateLocation();
 
@@ -267,6 +281,9 @@ var setUpState = {
                     }
                 }
             }
+            if (marbles[i].marble.type == 2 && marbles[i].marble.firstSkill == 1 && marbles[i].marble.status == 1) {
+                marbles[marbles.length-1].marble.angle = game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer) * 180/Math.PI + 135;
+            }
         }
 
         //==========Homemade Physics Engine Starts=============
@@ -281,40 +298,44 @@ var setUpState = {
                     game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
                 }
 
-                for (var i = 0; i < marbles.length; i++) {
-                    if (distance(item.marble, marbles[i].marble) < 28) {
-                        if (item.marble.name != marbles[i].lastTarget && i != item.marble.name && marbles[i].marble.name != item.lastTarget) {
+                for (var i = 0; i < 10; i++) {
+                    if (distance(item.marble, marbles[i].marble) < 32) {
+                        if ((item.marble.owner == 0 && item.marble.type == 6) || item.marble.owner != 0) {
+                            if (item.marble.name != marbles[i].lastTarget && i != item.marble.name && marbles[i].marble.name != item.lastTarget) {
 
-                            if (item.marble.owner == 0) { //arrow sprite
-                                item.marble.kill();
-                                marbles.pop();
+                                if (item.marble.owner == 0) { //arrow sprite
+                                    marbles[marbles.length-1].marble.kill();
+                                    marbles.pop();
+                                    marbles[marbles.length-1].marble.kill();
+                                    marbles.pop();
+                                }
+
+                                item.lastTarget = marbles[i].marble.name;//record the last hit marble, to prevent double collision;
+
+                                marbles[i].angle = game.physics.arcade.angleBetween(item.marble, marbles[i].marble) * 180 / Math.PI;
+                                
+                                var diff = 0; //Calculate the difference between the original angle between two marbles and angle at collision
+                                if (Math.abs(marbles[i].angle - item.angle) > 90) {
+                                    diff = marbles[i].angle - item.angle + 360;
+                                } else {
+                                    diff = marbles[i].angle - item.angle
+                                }
+                    
+                                item.angle = item.angle + Math.sin(Math.abs(diff)*Math.PI/180)*diff*2 + 180; //Determine angle difference by included angle
+
+                                //determine speed by decomposed force
+                                if (item.marble.owner != 0) {
+                                    marbles[i].speed = (item.speed/2 + (item.speed * Math.cos(Math.abs(diff)*Math.PI/180))/3) / marbles[i].knockBackResistFactor;  //Target
+                                    item.speed = (item.speed/2.5 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5) / item.knockBackResistFactor * marbles[i].returnFactor; //Attacker
+                                } else {
+                                    marbles[i].speed = 180;
+                                }
+
+                                game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity); // move marbles 
+                                hit = game.add.audio('hit');
+                                hit.play('', 0, 1, false);
+                                game.physics.arcade.velocityFromAngle(marbles[i].angle, marbles[i].speed, marbles[i].marble.body.velocity);
                             }
-
-                            item.lastTarget = marbles[i].marble.name;//record the last hit marble, to prevent double collision;
-
-                            marbles[i].angle = game.physics.arcade.angleBetween(item.marble, marbles[i].marble) * 180 / Math.PI;
-                            
-                            var diff = 0; //Calculate the difference between the original angle between two marbles and angle at collision
-                            if (Math.abs(marbles[i].angle - item.angle) > 90) {
-                                diff = marbles[i].angle - item.angle + 360;
-                            } else {
-                                diff = marbles[i].angle - item.angle
-                            }
-                
-                            item.angle = item.angle + Math.sin(Math.abs(diff)*Math.PI/180)*diff*2 + 180; //Determine angle difference by included angle
-
-                            //determine speed by decomposed force
-                            if (item.marble.owner != 0) {
-                                marbles[i].speed = (item.speed/2 + (item.speed * Math.cos(Math.abs(diff)*Math.PI/180))/3) / marbles[i].knockBackResistFactor;  //Target
-                                item.speed = (item.speed/2.5 + (item.speed*(Math.sin(Math.abs(diff)*Math.PI/180)))/5) / item.knockBackResistFactor * marbles[i].returnFactor; //Attacker
-                            } else {
-                                marbles[i].speed = 180;
-                            }
-
-                            game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity); // move marbles 
-                            hit = game.add.audio('hit');
-                            hit.play('', 0, 1, false);
-                            game.physics.arcade.velocityFromAngle(marbles[i].angle, marbles[i].speed, marbles[i].marble.body.velocity);
                         }
                     }
                 }
@@ -352,8 +373,8 @@ var setUpState = {
 
         for (var i = 0; i < marbles.length; i++) {
             if (marbles[i].marble.firstSkill == 1 && marbles[i].marble.type == 2 && marbles[i].marble.status == 1) {
-                marbles[marbles.length - 1].marble.body.x = marbles[i].marble.body.x + Math.cos(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer)) * 30
-                marbles[marbles.length - 1].marble.body.y = marbles[i].marble.body.y + Math.sin(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer)) * 30
+                marbles[marbles.length - 1].marble.body.x = marbles[i].marble.body.x + Math.cos(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer)) * 35 - 3
+                marbles[marbles.length - 1].marble.body.y = marbles[i].marble.body.y + Math.sin(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer)) * 35 - 2
             }
         }
 
@@ -363,7 +384,7 @@ var setUpState = {
                 /*console.log("marble: " + item.marble.name);
                 console.log("owner: player " + item.marble.owner);
                 console.log("location: " + item.location)*/
-                console.log("Location: (" + item.marble.body.x + ", " + item.marble.body.y + ")");
+                /*console.log("Location: (" + item.marble.body.x + ", " + item.marble.body.y + ")");
                
                 if (item.marble.type == 1) {
                     console.log("type: Warrior");
@@ -428,7 +449,7 @@ var setUpState = {
 
                 
 
-                //console.log();
+                //console.log();*/
             }
         });
 

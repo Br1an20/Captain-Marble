@@ -112,6 +112,12 @@ var gameMain = {
      update: function () {
         //console.log(game.input.mousePointer.x,game.input.mousePointer.y);
 
+        /*//update pointer
+        if (marbleIndex != -1) {
+            console.log("type: " + marbles[marbles.length - 1].marble.angle + " angle: " + game.physics.arcade.angleBetween(marbles[marbles.length - 1].marble, game.input.mousePointer) * 180/Math.PI - 90)
+            
+        }*/
+ 
         //Strength 
         if (marbleIndex > -1) {
 
@@ -195,8 +201,9 @@ var gameMain = {
         for (var i = 0; i < marbles.length; i++) {
             if (marbles[i].marble.arrowSpawned == 1) {
                 if (marbles[i].marble.type != 2 || marbles[i].marble.secondSkill != 2) {
-                    marbles[marbles.length - 1].marble.body.x = marbles[i].marble.body.x + Math.cos(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer) + Math.PI) * 30;
-                    marbles[marbles.length - 1].marble.body.y = marbles[i].marble.body.y + Math.sin(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer) + Math.PI) * 30;
+                    marbles[marbles.length - 1].marble.body.x = marbles[i].marble.body.x + Math.cos(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer) + Math.PI) * 20;
+                    marbles[marbles.length - 1].marble.body.y = marbles[i].marble.body.y + Math.sin(game.physics.arcade.angleBetween(marbles[i].marble, game.input.mousePointer) + Math.PI) * 20;
+                    marbles[marbles.length - 1].marble.angle = game.physics.arcade.angleBetween(marbles[marbles.length - 1].marble, game.input.mousePointer) * 180/Math.PI - 90;
                 } else {
                     marbles[marbles.length - 1].marble.body.x = game.input.mousePointer.x - 16;
                     marbles[marbles.length - 1].marble.body.y = game.input.mousePointer.y - 16;
@@ -220,7 +227,7 @@ var gameMain = {
                 game.physics.arcade.velocityFromAngle(item.angle, item.speed, item.marble.body.velocity);
 
                 for (var i = 0; i < 10; i++) {
-                    if (distance(item.marble, marbles[i].marble) < 28 && item.marble.owner != 0) {
+                    if (distance(item.marble, marbles[i].marble) < 32 && item.marble.owner != 0) {
                         if (item.marble.name != marbles[i].lastTarget && i != item.marble.name && marbles[i].marble.name != item.lastTarget) {
 
                             item.lastTarget = marbles[i].marble.name;//record the last hit marble, to prevent double collision;

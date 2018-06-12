@@ -16,7 +16,22 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
         if (type == 4) { // pointing arrow sprite
             this.marble = game.add.sprite(x,y,'pointer');
         }
-        else if (type == 5) { // 
+        else if (type == 5) { //  empty bow  
+
+            this.marble = game.add.sprite(x,y,'bow');
+            this.marble.animations.add('arrowAnimation', [0,1],2);
+            this.marble.animations.add('arrowAnimation2', [4,5,6],3);
+            this.marble.animations.play('arrowAnimation',true);
+
+
+        } else if (type == 6) { // projectile
+
+
+            this.marble = game.add.sprite(x, y, 'bowArrow');
+
+        } else if (type == 7) { //accurate marble
+
+            this.marble = game.add.sprite(x,y,'crosshair');
 
         }
     }
@@ -106,10 +121,10 @@ function marble (x, y, type, firstSkill, secondSkill, index, owner) {
                 if (item.arrowSpawned == 0) {
                     if (item.type != 2 || item.secondSkill != 2) {
                         var angle = game.physics.arcade.angleBetween(item, game.input.mousePointer);
-                        marbles.push(new marble(item.x + Math.cos(angle) * 30, item.y + Math.sin(angle) * 30, 4, 0, 0, marbles.length, 0));
+                        marbles.push(new marble(item.x + Math.cos(angle) * 16, item.y + Math.sin(angle) * 16, 4, 0, 0, marbles.length, 0));
                     } else {
                         console.log("spawned ball")
-                        marbles.push(new marble(game.input.mousePointer.x, game.input.mousePointer.y, 0, 0, 0, marbles.length, 0));
+                        marbles.push(new marble(game.input.mousePointer.x, game.input.mousePointer.y, 7, 0, 0, marbles.length, 0));
                     }
                     item.arrowSpawned = 1;
                 }
@@ -174,7 +189,12 @@ function updateLocation () {
                 enterRestArea(item);
             } else {
                 if (gameState == 2) {
-                    item.marble.kill();
+                    if (item.marble.type == 6) {
+                        console.log("it is six")
+                        marbles[marbles.length - 1].marble.kill();
+                        marbles.pop();
+                    }
+                    marbles[marbles.length - 1].marble.kill();
                     marbles.pop();
                 }
             }

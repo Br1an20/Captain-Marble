@@ -39,6 +39,10 @@ var Preloader = {
     game.load.spritesheet('toBlack', 'assets/img/toBlack.png',1200,700,14);
     game.load.spritesheet('fromBlack', 'assets/img/fromBlack.png',1200,700,18);
 
+    game.load.spritesheet('bow', 'assets/img/bow.png', 38,38,6);
+    game.load.image('bowArrow', 'assets/img/bowArrow.png');
+    game.load.image('crosshair', 'assets/img/crosshair.png');
+
     game.load.spritesheet('player1', 'assets/img/player1.png',132,60,2);
     game.load.spritesheet('player2', 'assets/img/player2.png',132,60,2);
     game.load.spritesheet('sample4', 'assets/img/sample4.png',55,60);
